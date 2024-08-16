@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FlightTicketManager.Data;
 using FlightTicketManager.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -9,17 +8,17 @@ namespace FlightTicketManager.Controllers
 {
     public class AircraftsController : Controller
     {
-        private readonly DataContext _context;
+        private readonly IAircraftRepository _aircraftRepository;
 
-        public AircraftsController(DataContext context)
+        public AircraftsController(IAircraftRepository aircraftRepository)
         {
-            _context = context;
+            _aircraftRepository = aircraftRepository;
         }
 
         // GET: Aircrafts
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Aircrafts.ToListAsync());
+            return View(_aircraftRepository.GetAll());
         }
 
         // GET: Aircrafts/Details/5
@@ -30,8 +29,7 @@ namespace FlightTicketManager.Controllers
                 return NotFound();
             }
 
-            var aircraft = await _context.Aircrafts
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var aircraft = await _aircraftRepository.GetByIdAsync(id.Value);
             if (aircraft == null)
             {
                 return NotFound();
@@ -51,12 +49,11 @@ namespace FlightTicketManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,Airline,Capacity,IsActive")] Aircraft aircraft)
+        public async Task<IActionResult> Create(Aircraft aircraft)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(aircraft);
-                await _context.SaveChangesAsync();
+                await _aircraftRepository.CreateAsync(aircraft);
                 return RedirectToAction(nameof(Index));
             }
             return View(aircraft);
@@ -70,7 +67,7 @@ namespace FlightTicketManager.Controllers
                 return NotFound();
             }
 
-            var aircraft = await _context.Aircrafts.FindAsync(id);
+            var aircraft = await _aircraftRepository.GetByIdAsync(id.Value);
             if (aircraft == null)
             {
                 return NotFound();
@@ -94,12 +91,11 @@ namespace FlightTicketManager.Controllers
             {
                 try
                 {
-                    _context.Update(aircraft);
-                    await _context.SaveChangesAsync();
+                    await _aircraftRepository.UpdateAsync(aircraft);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AircraftExists(aircraft.Id))
+                    if (! await _aircraftRepository.ExistAsync(aircraft.Id))
                     {
                         return NotFound();
                     }
@@ -121,8 +117,7 @@ namespace FlightTicketManager.Controllers
                 return NotFound();
             }
 
-            var aircraft = await _context.Aircrafts
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var aircraft = await _aircraftRepository.GetByIdAsync(id.Value);
             if (aircraft == null)
             {
                 return NotFound();
@@ -136,15 +131,10 @@ namespace FlightTicketManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var aircraft = await _context.Aircrafts.FindAsync(id);
-            _context.Aircrafts.Remove(aircraft);
-            await _context.SaveChangesAsync();
+            var aircraft = await _aircraftRepository.GetByIdAsync(id);
+            await _aircraftRepository.DeleteAsync(aircraft);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AircraftExists(int id)
-        {
-            return _context.Aircrafts.Any(e => e.Id == id);
-        }
     }
 }

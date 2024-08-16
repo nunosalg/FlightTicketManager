@@ -2,7 +2,7 @@
 
 namespace FlightTicketManager.Data.Entities
 {
-    public class Aircraft
+    public class Aircraft : IEntity
     {
         public int Id { get; set; }
 
