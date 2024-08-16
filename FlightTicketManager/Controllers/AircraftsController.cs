@@ -1,24 +1,28 @@
-﻿using System.Threading.Tasks;
-using FlightTicketManager.Data;
-using FlightTicketManager.Data.Entities;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using FlightTicketManager.Data;
+using FlightTicketManager.Data.Entities;
+using FlightTicketManager.Helpers;
 
 namespace FlightTicketManager.Controllers
 {
     public class AircraftsController : Controller
     {
         private readonly IAircraftRepository _aircraftRepository;
+        private readonly IUserHelper _userHelper;
 
-        public AircraftsController(IAircraftRepository aircraftRepository)
+        public AircraftsController(IAircraftRepository aircraftRepository, IUserHelper userHelper)
         {
             _aircraftRepository = aircraftRepository;
+            _userHelper = userHelper;
         }
 
         // GET: Aircrafts
         public IActionResult Index()
         {
-            return View(_aircraftRepository.GetAll());
+            return View(_aircraftRepository.GetAll().OrderBy(a => a.Description));
         }
 
         // GET: Aircrafts/Details/5
@@ -53,6 +57,9 @@ namespace FlightTicketManager.Controllers
         {
             if (ModelState.IsValid)
             {
+                //TODO: Modificar para o user que estiver logado
+                aircraft.User = await _userHelper.GetUserByEmailAsync("nunosalgueiro23@gmail.com");
+
                 await _aircraftRepository.CreateAsync(aircraft);
                 return RedirectToAction(nameof(Index));
             }
@@ -91,6 +98,8 @@ namespace FlightTicketManager.Controllers
             {
                 try
                 {
+                    //TODO: Modificar para o user que estiver logado
+                    aircraft.User = await _userHelper.GetUserByEmailAsync("nunosalgueiro23@gmail.com");
                     await _aircraftRepository.UpdateAsync(aircraft);
                 }
                 catch (DbUpdateConcurrencyException)

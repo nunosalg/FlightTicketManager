@@ -19,5 +19,7 @@ namespace FlightTicketManager.Data.Entities
 
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; }
+
+        public User User { get; set; }
     }
 }
