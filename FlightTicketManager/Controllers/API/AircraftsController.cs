@@ -1,5 +1,5 @@
-﻿using FlightTicketManager.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using FlightTicketManager.Data;
 
 namespace FlightTicketManager.Controllers.API
 {
@@ -17,7 +17,7 @@ namespace FlightTicketManager.Controllers.API
         [HttpGet]
         public IActionResult GetAircrafts()
         {
-            return Ok(_aircraftRepository.GetAll());
+            return Ok(_aircraftRepository.GetAllWithUsers());
         }
     }
 }

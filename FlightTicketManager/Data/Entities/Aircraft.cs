@@ -17,9 +17,25 @@ namespace FlightTicketManager.Data.Entities
         [Required]
         public int Capacity { get; set; }
 
+        [Display(Name = "Image")]
+        public string ImageUrl { get; set; } 
+
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; }
 
         public User User { get; set; }
+
+        public string ImageFullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ImageUrl))
+                {
+                    return null;
+                }
+
+                return $"https://localhost:44306{ImageUrl.Substring(1)}";
+            }
+        }
     }
 }
