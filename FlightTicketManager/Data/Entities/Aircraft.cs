@@ -31,7 +31,7 @@ namespace FlightTicketManager.Data.Entities
             {
                 if (string.IsNullOrEmpty(ImageUrl))
                 {
-                    return null;
+                    return "~/images/noimage.png";
                 }
 
                 return $"https://localhost:44306{ImageUrl.Substring(1)}";

@@ -1,11 +1,11 @@
-﻿using FlightTicketManager.Data;
-using FlightTicketManager.Data.Entities;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using FlightTicketManager.Data;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FlightTicketManager.Controllers
 {
@@ -52,6 +52,7 @@ namespace FlightTicketManager.Controllers
         }
 
         // GET: Aircrafts/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -85,6 +86,7 @@ namespace FlightTicketManager.Controllers
         }
 
         // GET: Aircrafts/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -143,6 +145,7 @@ namespace FlightTicketManager.Controllers
         }
 
         // GET: Aircrafts/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
