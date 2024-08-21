@@ -6,24 +6,31 @@ namespace FlightTicketManager.Data.Entities
     {
         public int Id { get; set; }
 
+
         [Required]
         [MaxLength(50)]
         public string Description { get; set; }
+
 
         [Required]
         [MaxLength(50)]
         public string Airline { get; set; }
 
+
         [Required]
         public int Capacity { get; set; }
+
 
         [Display(Name = "Image")]
         public string ImageUrl { get; set; } 
 
+
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; }
 
+
         public User User { get; set; }
+
 
         public string ImageFullPath
         {

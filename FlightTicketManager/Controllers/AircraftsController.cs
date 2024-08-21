@@ -169,6 +169,7 @@ namespace FlightTicketManager.Controllers
         {
             var aircraft = await _aircraftRepository.GetByIdAsync(id);
             await _aircraftRepository.DeleteAsync(aircraft);
+
             return RedirectToAction(nameof(Index));
         }
 

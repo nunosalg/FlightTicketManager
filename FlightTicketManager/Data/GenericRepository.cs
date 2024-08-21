@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using FlightTicketManager.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using FlightTicketManager.Data.Entities;
 
 namespace FlightTicketManager.Data
 {

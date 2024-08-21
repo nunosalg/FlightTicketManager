@@ -45,9 +45,9 @@ namespace FlightTicketManager
             services.AddScoped<IImageHelper, ImageHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
 
-
-
             services.AddScoped<IAircraftRepository, AircraftRepository>();
+            services.AddScoped<ICityRepository, CityRepository>();
+
 
             services.AddControllersWithViews();
         }
