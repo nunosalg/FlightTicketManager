@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using FlightTicketManager.Data;
 using FlightTicketManager.Data.Entities;
 
@@ -40,6 +41,7 @@ namespace FlightTicketManager.Controllers
         }
 
         // GET: Cities/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -54,15 +56,30 @@ namespace FlightTicketManager.Controllers
         {
             if (ModelState.IsValid)
             {
-                city.CountryCode = city.CountryCode.ToUpper();
+                try
+                {
+                    city.CountryCode = city.CountryCode.ToUpper();
 
-                await _cityRepository.CreateAsync(city);
-                return RedirectToAction(nameof(Index));
+                    await _cityRepository.CreateAsync(city);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("", "The city you are trying to add already exists in the database.");
+                    return View(city);
+                    //return RedirectToAction("CityAlreadyExists");
+                }
             }
             return View(city);
         }
 
+        //public IActionResult CityAlreadyExists()
+        //{
+        //    return View();
+        //}
+
         // GET: Cities/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -110,6 +127,7 @@ namespace FlightTicketManager.Controllers
         }
 
         // GET: Cities/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

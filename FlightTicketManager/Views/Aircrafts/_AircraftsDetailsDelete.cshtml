@@ -1,0 +1,36 @@
+﻿@model FlightTicketManager.Data.Entities.Aircraft
+
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <dl class="row">
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Airline)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Airline)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Capacity)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Capacity)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.IsActive)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.IsActive)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-md-4">
+        <img src="@Url.Content(Model.ImageFullPath)" alt="Image" style="width:200px;height:300px;max-width:100%;height:auto">
+    </div>
+</div>

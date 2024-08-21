@@ -76,8 +76,7 @@ namespace FlightTicketManager.Controllers
 
                 var aircraft = _converterHelper.ToAircraft(model, path, true);
 
-                //TODO: Modificar para o user que estiver logado
-                aircraft.User = await _userHelper.GetUserByEmailAsync("nunosalgueiro23@gmail.com");
+                aircraft.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
 
                 await _aircraftRepository.CreateAsync(aircraft);
                 return RedirectToAction(nameof(Index));
@@ -124,8 +123,7 @@ namespace FlightTicketManager.Controllers
 
                     var aircraft = _converterHelper.ToAircraft(model, path, false);
 
-                    //TODO: Modificar para o user que estiver logado
-                    aircraft.User = await _userHelper.GetUserByEmailAsync("nunosalgueiro23@gmail.com");
+                    aircraft.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                     await _aircraftRepository.UpdateAsync(aircraft);
                 }
                 catch (DbUpdateConcurrencyException)
