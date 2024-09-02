@@ -18,10 +18,11 @@ namespace FlightTicketManager.Data
         // Configures a unique index on the 'Name' column in the 'City' entity to ensure no duplicate city names
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<City>()
                 .HasIndex(c => c.Name)
                 .IsUnique();
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

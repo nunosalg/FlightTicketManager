@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using FlightTicketManager.Data;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
+using Syncfusion.Licensing;
 
 namespace FlightTicketManager
 {
@@ -23,6 +24,9 @@ namespace FlightTicketManager
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string syncfusionKey = Configuration["Syncfusion:LicenseKey"];
+            SyncfusionLicenseProvider.RegisterLicense(syncfusionKey);
+
             services.AddIdentity<User, IdentityRole>(cfg =>
             {
                 cfg.User.RequireUniqueEmail = true;

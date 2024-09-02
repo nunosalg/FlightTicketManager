@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - FlightTicketManager</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/26.2.11/fluent.css" />
+    <script src="https://cdn.syncfusion.com/ej2/26.2.11/dist/ej2.min.js"></script>
 </head>
 <body>
     <header>
@@ -67,5 +70,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    @RenderSection("ControlsSection", required: false)
+    <ejs-scripts></ejs-scripts>
 </body>
 </html>
