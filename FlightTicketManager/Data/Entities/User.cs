@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace FlightTicketManager.Data.Entities
 {
@@ -7,5 +8,22 @@ namespace FlightTicketManager.Data.Entities
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
+
+        public DateTime BirthDate { get; set; }
+
+        public string AvatarUrl { get; set; }
+
+        public string AvatarFullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(AvatarUrl))
+                {
+                    return "~/images/defaultavatar.png";
+                }
+
+                return $"https://localhost:44306{AvatarUrl.Substring(1)}";
+            }
+        }
     }
 }

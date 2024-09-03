@@ -5,9 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using FlightTicketManager.Data;
 using FlightTicketManager.Data.Entities;
+using FlightTicketManager.Helpers;
 
 namespace FlightTicketManager.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CitiesController : Controller
     {
         private readonly ICityRepository _cityRepository;
@@ -28,20 +30,19 @@ namespace FlightTicketManager.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("CityNotFound");
             }
 
             var city = await _cityRepository.GetByIdAsync(id.Value);
             if (city == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("CityNotFound");
             }
 
             return View(city);
         }
 
         // GET: Cities/Create
-        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -65,32 +66,24 @@ namespace FlightTicketManager.Controllers
                 }
                 catch (DbUpdateException)
                 {
-                    ModelState.AddModelError("", "The city you are trying to add already exists in the database.");
-                    return View(city);
-                    //return RedirectToAction("CityAlreadyExists");
+                    return new NotFoundViewResult("CityAlreadyExists");
                 }
             }
             return View(city);
         }
 
-        //public IActionResult CityAlreadyExists()
-        //{
-        //    return View();
-        //}
-
         // GET: Cities/Edit/5
-        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("CityNotFound");
             }
 
             var city = await _cityRepository.GetByIdAsync(id.Value);
             if (city == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("CityNotFound");
             }
             return View(city);
         }
@@ -114,7 +107,7 @@ namespace FlightTicketManager.Controllers
                 {
                     if (!await _cityRepository.ExistAsync(city.Id))
                     {
-                        return NotFound();
+                        return new NotFoundViewResult("CityNotFound");
                     }
                     else
                     {
@@ -127,18 +120,17 @@ namespace FlightTicketManager.Controllers
         }
 
         // GET: Cities/Delete/5
-        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("CityNotFound");
             }
 
             var city = await _cityRepository.GetByIdAsync(id.Value);
             if (city == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("CityNotFound");
             }
 
             return View(city);
@@ -153,6 +145,16 @@ namespace FlightTicketManager.Controllers
             await _cityRepository.DeleteAsync(city);
 
             return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult CityNotFound()
+        {
+            return View();
+        }
+
+        public IActionResult CityAlreadyExists()
+        {
+            return View();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace FlightTicketManager.Models
 {
@@ -12,6 +14,16 @@ namespace FlightTicketManager.Models
         [Required]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
+
+
+        [Required]
+        [Display(Name = "Birth Date")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = false)]
+        public DateTime BirthDate { get; set; }
+
+
+        [Display(Name = "Avatar")]
+        public IFormFile ImageFile { get; set; }
 
 
         [Required]

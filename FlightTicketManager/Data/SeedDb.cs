@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
-using Microsoft.AspNetCore.Identity;
 
 namespace FlightTicketManager.Data
 {
@@ -22,7 +23,11 @@ namespace FlightTicketManager.Data
 
         public async Task SeedAsync()
         {
-            await _context.Database.EnsureCreatedAsync();
+            await _context.Database.MigrateAsync();
+
+            await _userHelper.CheckRoleAsync("Admin");
+            await _userHelper.CheckRoleAsync("Employee");
+            await _userHelper.CheckRoleAsync("Customer");
 
             var user = await _userHelper.GetUserByEmailAsync("nunosalgueiro23@gmail.com");
             if (user == null)
@@ -33,6 +38,7 @@ namespace FlightTicketManager.Data
                     LastName = "Salgueiro",
                     Email = "nunosalgueiro23@gmail.com",
                     UserName = "nunosalgueiro23@gmail.com",
+                    BirthDate = new DateTime(1990, 10, 24)
                 };
 
                 var result = await _userHelper.AddUserAsync(user, "123456");
@@ -40,6 +46,14 @@ namespace FlightTicketManager.Data
                 {
                     throw new InvalidOperationException("Could not create the user in seeder");
                 }
+
+                await _userHelper.AddUserToRoleAsync(user, "Admin");
+            }
+
+            var isInRole = await _userHelper.IsUserInRoleAsync(user, "Admin");
+            if (!isInRole)
+            {
+                await _userHelper.AddUserToRoleAsync(user, "Admin");
             }
 
             if (!_context.Aircrafts.Any())

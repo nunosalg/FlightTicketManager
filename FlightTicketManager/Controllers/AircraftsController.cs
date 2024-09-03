@@ -9,6 +9,7 @@ using FlightTicketManager.Models;
 
 namespace FlightTicketManager.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AircraftsController : Controller
     {
         private readonly IAircraftRepository _aircraftRepository;
@@ -39,20 +40,19 @@ namespace FlightTicketManager.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("AircraftNotFound");
             }
 
             var aircraft = await _aircraftRepository.GetByIdAsync(id.Value);
             if (aircraft == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("AircraftNotFound");
             }
 
             return View(aircraft);
         }
 
         // GET: Aircrafts/Create
-        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -85,18 +85,17 @@ namespace FlightTicketManager.Controllers
         }
 
         // GET: Aircrafts/Edit/5
-        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("AircraftNotFound");
             }
 
             var aircraft = await _aircraftRepository.GetByIdAsync(id.Value);
             if (aircraft == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("AircraftNotFound");
             }
 
             var model = _converterHelper.ToAircraftViewModel(aircraft);
@@ -130,7 +129,7 @@ namespace FlightTicketManager.Controllers
                 {
                     if (!await _aircraftRepository.ExistAsync(model.Id))
                     {
-                        return NotFound();
+                        return new NotFoundViewResult("AircraftNotFound");
                     }
                     else
                     {
@@ -143,18 +142,17 @@ namespace FlightTicketManager.Controllers
         }
 
         // GET: Aircrafts/Delete/5
-        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("AircraftNotFound");
             }
 
             var aircraft = await _aircraftRepository.GetByIdAsync(id.Value);
             if (aircraft == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("AircraftNotFound");
             }
 
             return View(aircraft);
@@ -171,5 +169,9 @@ namespace FlightTicketManager.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public IActionResult AircraftNotFound()
+        {
+            return View();
+        }
     }
 }

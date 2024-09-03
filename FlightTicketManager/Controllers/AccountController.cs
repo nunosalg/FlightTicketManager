@@ -11,10 +11,14 @@ namespace FlightTicketManager.Controllers
     public class AccountController : Controller
     {
         private readonly IUserHelper _userHelper;
+        private readonly IImageHelper _imageHelper;
 
-        public AccountController(IUserHelper userHelper)
+        public AccountController(
+            IUserHelper userHelper,
+            IImageHelper imageHelper)
         {
             _userHelper = userHelper;
+            _imageHelper = imageHelper;
         }
 
         public IActionResult Login()
@@ -73,14 +77,25 @@ namespace FlightTicketManager.Controllers
                         LastName = model.LastName,
                         Email = model.Username,
                         UserName = model.Username,
+                        BirthDate = model.BirthDate
                     };
+
+                    if (model.ImageFile != null && model.ImageFile.Length > 0)
+                    {
+                        var path = await _imageHelper.UploadImageAsync(model.ImageFile, "users");
+
+                        user.AvatarUrl = path;
+                    }
 
                     var result = await _userHelper.AddUserAsync(user, model.Password);
                     if(result != IdentityResult.Success)
                     {
-                        ModelState.AddModelError("", "Couldn' create user.");
+                        ModelState.AddModelError("", "Couldn't create user.");
                         return View(model);
                     }
+
+                    // Registered users get "Customer" role
+                    await _userHelper.AddUserToRoleAsync(user, "Customer");
 
                     var loginViewModel = new LoginViewModel
                     {
@@ -99,6 +114,8 @@ namespace FlightTicketManager.Controllers
                 }
             }
 
+            ModelState.AddModelError("", "That email is already registered!");
+
             return View(model);
         }
 
@@ -110,6 +127,7 @@ namespace FlightTicketManager.Controllers
             {
                 model.FirstName = user.FirstName;
                 model.LastName = user.LastName;
+                model.BirthDate = user.BirthDate;
             }
 
             return View(model);
@@ -125,6 +143,13 @@ namespace FlightTicketManager.Controllers
                 {
                     user.FirstName = model.FirstName;
                     user.LastName = model.LastName;
+                    user.BirthDate = model.BirthDate;
+
+                    if (model.ImageFile != null && model.ImageFile.Length > 0)
+                    {
+                        var path = await _imageHelper.UploadImageAsync(model.ImageFile, "users");
+                        user.AvatarUrl = path;
+                    }
 
                     var response = await _userHelper.UpdateUserAsync(user);
                     if(response.Succeeded)
@@ -171,6 +196,11 @@ namespace FlightTicketManager.Controllers
             }
 
             return this.View(model);
+        }
+
+        public IActionResult NotAuthorized()
+        {
+            return View();
         }
     }
 }
