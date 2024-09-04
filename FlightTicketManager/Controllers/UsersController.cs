@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
+using System.Collections.Generic;
 
 namespace FlightTicketManager.Controllers
 {
@@ -21,10 +22,79 @@ namespace FlightTicketManager.Controllers
             _roleManager = roleManager;
         }
 
+        //// GET: Users
+        //public IActionResult Index()
+        //{
+        //    return View(_userManager.Users.ToList());
+        //}
+
         // GET: Users
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(_userManager.Users.ToList());
+            var users = _userManager.Users.ToList();
+            var userRoles = new List<UserRolesViewModel>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                userRoles.Add(new UserRolesViewModel
+                {
+                    User = user,
+                    Roles = roles
+                });
+            }
+
+            return View(userRoles);
+        }
+
+        // GET: Users/Create
+        public IActionResult Create()
+        {
+            var model = new RegisterNewUserViewModel
+            {
+                Roles = _roleManager.Roles.Select(role => new RoleCheckBox
+                {
+                    RoleName = role.Name,
+                    IsSelected = false
+                }).ToList()
+            };
+
+            return View(model);
+        }
+
+        // POST: Users/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(RegisterNewUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new User
+                {
+                    UserName = model.Username,
+                    Email = model.Username,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    BirthDate = model.BirthDate
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    var selectedRoles = model.Roles.Where(r => r.IsSelected).Select(r => r.RoleName).ToList();
+                    await _userManager.AddToRolesAsync(user, selectedRoles);
+
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+            return View(model);
         }
 
         // GET: Users/Edit/5

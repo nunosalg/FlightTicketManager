@@ -1,13 +1,13 @@
-﻿@using Microsoft.AspNetCore.Identity
-@inject UserManager<FlightTicketManager.Data.Entities.User> UserManager
-@model IEnumerable<FlightTicketManager.Data.Entities.User>
+﻿@model IEnumerable<FlightTicketManager.Models.UserRolesViewModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Users List</h1>
-
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
 <table class="table">
     <thead>
         <tr>
@@ -26,22 +26,19 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var user in Model)
+        @foreach (var userRole in Model)
         {
             <tr>
                 <td>
-                    @user.FirstName @user.LastName
+                    @userRole.User.FirstName @userRole.User.LastName
                 </td>
-                <td>@user.Email</td>
+                <td>@userRole.User.Email</td>
                 <td>
-                    @{
-                        var roles = await UserManager.GetRolesAsync(user);
-                    }
-                    @string.Join(", ", roles)
+                    @string.Join(", ", userRole.Roles)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@userRole.User.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@userRole.User.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }

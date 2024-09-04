@@ -1,4 +1,5 @@
 ﻿@model FlightTicketManager.Models.AircraftViewModel
+@using Syncfusion.EJ2
 
 <div class="form-group">
     <label asp-for="Description" class="control-label"></label>
@@ -22,6 +23,7 @@
 </div>
 <div class="form-group form-check">
     <label class="form-check-label">
-        <ejs-checkbox id="checked" checked="true" asp-for="IsActive"></ejs-checkbox> @Html.DisplayNameFor(model => model.IsActive)
+        <ejs-checkbox id="IsActive" name="IsActive" value="true" checked="@(Model?.IsActive ?? false)"></ejs-checkbox>
+        <input type="hidden" name="IsActive" value="false" />
     </label>
 </div>

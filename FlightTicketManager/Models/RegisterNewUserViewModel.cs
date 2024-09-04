@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using FlightTicketManager.Helpers;
 using Microsoft.AspNetCore.Http;
 
 namespace FlightTicketManager.Models
@@ -24,6 +26,8 @@ namespace FlightTicketManager.Models
 
         [Display(Name = "Avatar")]
         public IFormFile ImageFile { get; set; }
+
+        public List<RoleCheckBox> Roles { get; set; }
 
 
         [Required]

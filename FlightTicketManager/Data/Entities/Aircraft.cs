@@ -25,7 +25,7 @@ namespace FlightTicketManager.Data.Entities
         public string ImageUrl { get; set; } 
 
 
-        [Display(Name = "Is Active")]
+        [Display(Name = "Active")]
         public bool IsActive { get; set; }
 
 

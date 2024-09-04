@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<FlightTicketManager.Data.Entities.User> UserManager
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -35,7 +37,7 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="" asp-action="">Users</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Users" asp-action="">Users</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-controller="" asp-action="">Roles</a></li>
                                 </ul>
                             </li>
@@ -47,8 +49,12 @@
                     <ul class="navbar-nav ml-auto d-flex align-items-center">
                         @if (this.User.Identity.IsAuthenticated)
                         {
+                            var currentUser = UserManager.GetUserAsync(User).Result;
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="ChangeUser">@this.User.Identity.Name</a>
+                            </li>
+                            <li class="nav-item">
+                                <img src="@Url.Content(currentUser.AvatarFullPath)" alt="User Avatar" class="rounded-circle" style="width: 40px; height: 40px;" />
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
