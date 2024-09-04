@@ -1,0 +1,49 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<FlightTicketManager.Data.Entities.User> UserManager
+@model IEnumerable<FlightTicketManager.Data.Entities.User>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Users List</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Roles
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>
+                    @user.FirstName @user.LastName
+                </td>
+                <td>@user.Email</td>
+                <td>
+                    @{
+                        var roles = await UserManager.GetRolesAsync(user);
+                    }
+                    @string.Join(", ", roles)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
