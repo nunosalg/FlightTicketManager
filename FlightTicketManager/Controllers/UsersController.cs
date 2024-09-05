@@ -14,13 +14,16 @@ namespace FlightTicketManager.Controllers
     [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
+        private readonly IUserHelper _userHelper;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public UsersController(
+            IUserHelper userHelper,
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager)
         {
+            _userHelper = userHelper;
             _userManager = userManager;
             _roleManager = roleManager;
         }
@@ -28,13 +31,13 @@ namespace FlightTicketManager.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            var users = _userManager.Users.ToList();
-
+            var users = _userHelper.GetAllUsers();
             var userList = new List<UserRoleViewModel>();
 
             foreach (var user in users)
             {
-                var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+                var role = (await _userHelper.GetUserRolesAsync(user)).FirstOrDefault();
+
 
                 userList.Add(new UserRoleViewModel
                 {
@@ -52,7 +55,7 @@ namespace FlightTicketManager.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
-            var model = new RegisterNewUserViewModel
+            var model = new AdminRegisterNewUserViewModel
             {
                 Roles = _roleManager.Roles.Select(role => new SelectListItem
                 {
@@ -67,28 +70,33 @@ namespace FlightTicketManager.Controllers
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(RegisterNewUserViewModel model)
+        public async Task<IActionResult> Create(AdminRegisterNewUserViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = new User
+                var user = await _userHelper.GetUserByEmailAsync(model.Username);
+                if (user == null)
                 {
-                    UserName = model.Username,
-                    Email = model.Username,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    BirthDate = model.BirthDate
-                };
+                    user = new User
+                    {
+                        UserName = model.Username,
+                        Email = model.Username,
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        BirthDate = model.BirthDate
+                    };
 
-                var result = await _userManager.CreateAsync(user, model.Password);
+                    string password = "123456";
+                    var result = await _userManager.CreateAsync(user, password);
 
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(user, model.SelectedRole);
+                    if (result.Succeeded)
+                    {
+                        await _userManager.AddToRoleAsync(user, model.SelectedRole);
 
-                    return RedirectToAction(nameof(Index));
+                        return RedirectToAction(nameof(Index));
+                    }
+
                 }
-
                 ModelState.AddModelError("", "Failed to create user.");
             }
 
@@ -112,12 +120,11 @@ namespace FlightTicketManager.Controllers
             var userRole = await _userManager.GetRolesAsync(user);
             var allRoles = _roleManager.Roles;
 
-            var model = new ChangeUserViewModel
+            var model = new AdminEditUserViewModel
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Username = user.UserName,
-                BirthDate = user.BirthDate,
                 SelectedRole = userRole.FirstOrDefault(), 
 
                 RolesSelectList = allRoles.Select(role => new SelectListItem
@@ -134,7 +141,7 @@ namespace FlightTicketManager.Controllers
         // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ChangeUserViewModel model)
+        public async Task<IActionResult> Edit(AdminEditUserViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -147,7 +154,6 @@ namespace FlightTicketManager.Controllers
                 user.UserName = model.Username;
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
-                user.BirthDate = model.BirthDate;
 
                 var result = await _userManager.UpdateAsync(user);
                 if (!result.Succeeded)

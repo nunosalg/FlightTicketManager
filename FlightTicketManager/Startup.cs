@@ -9,6 +9,9 @@ using FlightTicketManager.Data;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using Syncfusion.Licensing;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication;
 
 namespace FlightTicketManager
 {
@@ -29,6 +32,8 @@ namespace FlightTicketManager
 
             services.AddIdentity<User, IdentityRole>(cfg =>
             {
+                cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
+                cfg.SignIn.RequireConfirmedEmail = true;
                 cfg.User.RequireUniqueEmail = true;
                 cfg.Password.RequireDigit = false;
                 cfg.Password.RequiredUniqueChars = 0;
@@ -37,6 +42,7 @@ namespace FlightTicketManager
                 cfg.Password.RequireNonAlphanumeric = false;
                 cfg.Password.RequiredLength = 6;
             })
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<DataContext>();
 
             services.AddDbContext<DataContext>(cfg =>
@@ -44,10 +50,24 @@ namespace FlightTicketManager
                 cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            services.AddAuthentication()
+                .AddCookie()
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = this.Configuration["Tokens:Issuer"],
+                        ValidAudience = this.Configuration["Tokens:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(this.Configuration["Tokens:Key"]))
+                    };
+                });
+
             services.AddTransient<SeedDb>();
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<IImageHelper, ImageHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
+            services.AddScoped<IMailHelper, MailHelper>();
 
             services.AddScoped<IAircraftRepository, AircraftRepository>();
             services.AddScoped<ICityRepository, CityRepository>();
@@ -64,6 +84,8 @@ namespace FlightTicketManager
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+           
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -83,6 +105,27 @@ namespace FlightTicketManager
             app.UseRouting();
 
             app.UseAuthentication();
+
+            // Middleware to force the logout if the user doesn't exist in the database
+            app.Use(async (context, next) =>
+            {
+                if (context.User?.Identity?.IsAuthenticated == true)
+                {
+                    var userManager = context.RequestServices.GetRequiredService<UserManager<User>>();
+                    var user = await userManager.GetUserAsync(context.User);
+
+                    if (user == null)
+                    {
+                        // User doesn't exist, the logout is forced
+                        await context.SignOutAsync(IdentityConstants.ApplicationScheme);
+                        context.Response.Redirect("/Account/Login");
+                        return;
+                    }
+                }
+
+                await next();
+            });
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

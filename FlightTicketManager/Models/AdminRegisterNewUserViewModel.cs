@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FlightTicketManager.Models
 {
-    public class RegisterNewUserViewModel
+    public class AdminRegisterNewUserViewModel
     {
         [Required]
         [Display(Name = "First Name")]
@@ -22,22 +23,15 @@ namespace FlightTicketManager.Models
         public DateTime BirthDate { get; set; }
 
 
-        [Display(Name = "Avatar")]
-        public IFormFile ImageFile { get; set; }
+        [Required]
+        public string SelectedRole { get; set; }
+
+
+        public IEnumerable<SelectListItem> Roles { get; set; }
 
 
         [Required]
         [DataType(DataType.EmailAddress)]
         public string Username { get; set; }
-
-
-        [Required]
-        [MinLength(6)]
-        public string Password { get; set; }
-
-
-        [Required]
-        [Compare("Password")]
-        public string Confirm { get; set; }
     }
 }

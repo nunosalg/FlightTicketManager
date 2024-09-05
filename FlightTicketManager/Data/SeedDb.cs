@@ -29,15 +29,15 @@ namespace FlightTicketManager.Data
             await _userHelper.CheckRoleAsync("Employee");
             await _userHelper.CheckRoleAsync("Customer");
 
-            var user = await _userHelper.GetUserByEmailAsync("nunosalgueiro23@gmail.com");
+            var user = await _userHelper.GetUserByEmailAsync("nunotestescet87@gmail.com");
             if (user == null)
             {
                 user = new User
                 {
                     FirstName = "Nuno",
                     LastName = "Salgueiro",
-                    Email = "nunosalgueiro23@gmail.com",
-                    UserName = "nunosalgueiro23@gmail.com",
+                    Email = "nunotestescet87@gmail.com",
+                    UserName = "nunotestescet87@gmail.com",
                     BirthDate = new DateTime(1990, 10, 24)
                 };
 
@@ -48,6 +48,8 @@ namespace FlightTicketManager.Data
                 }
 
                 await _userHelper.AddUserToRoleAsync(user, "Admin");
+                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                await _userHelper.ConfirmEmailAsync(user, token);
             }
 
             var isInRole = await _userHelper.IsUserInRoleAsync(user, "Admin");
@@ -64,6 +66,25 @@ namespace FlightTicketManager.Data
                 AddAircraft("Airbus339", "TAP", user);
                 await _context.SaveChangesAsync();
             }
+
+            if (!_context.Cities.Any())
+            {
+                AddCity("Lisbon", "PT");
+                AddCity("Madrid", "ES");
+                AddCity("Rome", "IT");
+                AddCity("Paris", "FR");
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private void AddCity(string name, string countryCode)
+        {
+            _context.Cities.Add(new City
+            {
+                Name = name,
+                CountryCode = countryCode
+            });
         }
 
         private void AddAircraft(string description, string airline, User user)
