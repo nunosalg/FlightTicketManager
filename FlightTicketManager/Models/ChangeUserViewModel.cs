@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using FlightTicketManager.Helpers;
 using Microsoft.AspNetCore.Http;
+using FlightTicketManager.Helpers;
 
 namespace FlightTicketManager.Models
 {

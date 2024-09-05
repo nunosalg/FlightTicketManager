@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
-using System.Collections.Generic;
 
 namespace FlightTicketManager.Controllers
 {
@@ -22,18 +22,12 @@ namespace FlightTicketManager.Controllers
             _roleManager = roleManager;
         }
 
-        //// GET: Users
-        //public IActionResult Index()
-        //{
-        //    return View(_userManager.Users.ToList());
-        //}
-
         // GET: Users
         public async Task<IActionResult> Index()
         {
             var users = _userManager.Users.ToList();
             var userRoles = new List<UserRolesViewModel>();
-
+            // Get the roles of each user 
             foreach (var user in users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
@@ -102,13 +96,13 @@ namespace FlightTicketManager.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("UserNotFound");
             }
 
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("UserNotFound");
             }
 
             var userRoles = await _userManager.GetRolesAsync(user);
@@ -140,7 +134,7 @@ namespace FlightTicketManager.Controllers
                 var user = await _userManager.FindByEmailAsync(model.Username); 
                 if (user == null)
                 {
-                    return NotFound();
+                    return new NotFoundViewResult("UserNotFound");
                 }
 
                 user.UserName = model.Username;
@@ -181,13 +175,13 @@ namespace FlightTicketManager.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("UserNotFound");
             }
 
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("UserNotFound");
             }
 
             return View(user);
@@ -208,6 +202,11 @@ namespace FlightTicketManager.Controllers
                 }
             }
             return View(user);
+        }
+
+        public IActionResult UserNotFound()
+        {
+            return View();
         }
     }
 }

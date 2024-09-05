@@ -1,5 +1,5 @@
-﻿using FlightTicketManager.Data.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using FlightTicketManager.Data.Entities;
 
 namespace FlightTicketManager.Models
 {
