@@ -3,12 +3,15 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
 
 namespace FlightTicketManager.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -26,19 +29,24 @@ namespace FlightTicketManager.Controllers
         public async Task<IActionResult> Index()
         {
             var users = _userManager.Users.ToList();
-            var userRoles = new List<UserRolesViewModel>();
-            // Get the roles of each user 
+
+            var userList = new List<UserRoleViewModel>();
+
             foreach (var user in users)
             {
-                var roles = await _userManager.GetRolesAsync(user);
-                userRoles.Add(new UserRolesViewModel
+                var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+                userList.Add(new UserRoleViewModel
                 {
-                    User = user,
-                    Roles = roles
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Role = role 
                 });
             }
 
-            return View(userRoles);
+            return View(userList);
         }
 
         // GET: Users/Create
@@ -46,10 +54,10 @@ namespace FlightTicketManager.Controllers
         {
             var model = new RegisterNewUserViewModel
             {
-                Roles = _roleManager.Roles.Select(role => new RoleCheckBox
+                Roles = _roleManager.Roles.Select(role => new SelectListItem
                 {
-                    RoleName = role.Name,
-                    IsSelected = false
+                    Value = role.Name,
+                    Text = role.Name,
                 }).ToList()
             };
 
@@ -76,16 +84,12 @@ namespace FlightTicketManager.Controllers
 
                 if (result.Succeeded)
                 {
-                    var selectedRoles = model.Roles.Where(r => r.IsSelected).Select(r => r.RoleName).ToList();
-                    await _userManager.AddToRolesAsync(user, selectedRoles);
+                    await _userManager.AddToRoleAsync(user, model.SelectedRole);
 
                     return RedirectToAction(nameof(Index));
                 }
 
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                ModelState.AddModelError("", "Failed to create user.");
             }
 
             return View(model);
@@ -105,19 +109,22 @@ namespace FlightTicketManager.Controllers
                 return new NotFoundViewResult("UserNotFound");
             }
 
-            var userRoles = await _userManager.GetRolesAsync(user);
+            var userRole = await _userManager.GetRolesAsync(user);
             var allRoles = _roleManager.Roles;
 
             var model = new ChangeUserViewModel
             {
-                Username = user.UserName,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                Username = user.UserName,
                 BirthDate = user.BirthDate,
-                Roles = allRoles.Select(role => new RoleCheckBox
+                SelectedRole = userRole.FirstOrDefault(), 
+
+                RolesSelectList = allRoles.Select(role => new SelectListItem
                 {
-                    RoleName = role.Name,
-                    IsSelected = userRoles.Contains(role.Name)
+                    Value = role.Name,
+                    Text = role.Name,
+                    Selected = userRole.Contains(role.Name)
                 }).ToList()
             };
 
@@ -149,19 +156,17 @@ namespace FlightTicketManager.Controllers
                     return View(model);
                 }
 
+                // Remove all roles from the user
                 var userRoles = await _userManager.GetRolesAsync(user);
-                var selectedRoles = model.Roles.Where(r => r.IsSelected).Select(r => r.RoleName).ToList();
-                var rolesToAdd = selectedRoles.Except(userRoles).ToList();
-                var rolesToRemove = userRoles.Except(selectedRoles).ToList();
-
-                if (rolesToAdd.Any())
+                if (userRoles.Any())
                 {
-                    await _userManager.AddToRolesAsync(user, rolesToAdd);
+                    await _userManager.RemoveFromRolesAsync(user, userRoles);
                 }
 
-                if (rolesToRemove.Any())
+                // Add the new role if selected
+                if (!string.IsNullOrEmpty(model.SelectedRole))
                 {
-                    await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+                    await _userManager.AddToRoleAsync(user, model.SelectedRole);
                 }
 
                 return RedirectToAction(nameof(Index));

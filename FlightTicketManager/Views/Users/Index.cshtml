@@ -1,5 +1,4 @@
-﻿@model IEnumerable<FlightTicketManager.Models.UserRolesViewModel>
-
+﻿@model IEnumerable<FlightTicketManager.Models.UserRoleViewModel>
 @{
     ViewData["Title"] = "Index";
 }
@@ -26,19 +25,15 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var userRole in Model)
+        @foreach (var user in Model)
         {
             <tr>
+                <td>@user.FirstName @user.LastName</td>
+                <td>@user.Email</td>
+                <td>@user.Role</td>
                 <td>
-                    @userRole.User.FirstName @userRole.User.LastName
-                </td>
-                <td>@userRole.User.Email</td>
-                <td>
-                    @string.Join(", ", userRole.Roles)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@userRole.User.Id" class="btn btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@userRole.User.Id" class="btn btn-danger">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }

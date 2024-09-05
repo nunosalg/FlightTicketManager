@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 using FlightTicketManager.Helpers;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FlightTicketManager.Models
 {
@@ -28,7 +29,11 @@ namespace FlightTicketManager.Models
         public IFormFile ImageFile { get; set; }
 
 
-        public List<RoleCheckBox> Roles { get; set; }
+        [Required]
+        public string SelectedRole { get; set; }
+
+
+        public IEnumerable<SelectListItem> Roles { get; set; }
 
 
         [Required]
