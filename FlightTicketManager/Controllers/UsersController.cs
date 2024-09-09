@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
+using System;
 
 namespace FlightTicketManager.Controllers
 {
@@ -15,17 +15,14 @@ namespace FlightTicketManager.Controllers
     public class UsersController : Controller
     {
         private readonly IUserHelper _userHelper;
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IMailHelper _mailHelper;
 
         public UsersController(
             IUserHelper userHelper,
-            UserManager<User> userManager,
-            RoleManager<IdentityRole> roleManager)
+            IMailHelper mailHelper)
         {
             _userHelper = userHelper;
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _mailHelper = mailHelper;
         }
 
         // GET: Users
@@ -37,7 +34,6 @@ namespace FlightTicketManager.Controllers
             foreach (var user in users)
             {
                 var role = (await _userHelper.GetUserRolesAsync(user)).FirstOrDefault();
-
 
                 userList.Add(new UserRoleViewModel
                 {
@@ -57,7 +53,7 @@ namespace FlightTicketManager.Controllers
         {
             var model = new AdminRegisterNewUserViewModel
             {
-                Roles = _roleManager.Roles.Select(role => new SelectListItem
+                Roles = _userHelper.GetAllRoles().Select(role => new SelectListItem
                 {
                     Value = role.Name,
                     Text = role.Name,
@@ -86,17 +82,36 @@ namespace FlightTicketManager.Controllers
                         BirthDate = model.BirthDate
                     };
 
-                    string password = "123456";
-                    var result = await _userManager.CreateAsync(user, password);
+                    string password = new Random().ToString();
+                    var result = await _userHelper.AddUserAsync(user, password);
 
                     if (result.Succeeded)
                     {
-                        await _userManager.AddToRoleAsync(user, model.SelectedRole);
+                        await _userHelper.AddUserToRoleAsync(user, model.SelectedRole);
+                        var userToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                        await _userHelper.ConfirmEmailAsync(user, userToken);
 
-                        return RedirectToAction(nameof(Index));
+                        var resetToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+
+                        string tokenLink = Url.Action("ConfirmEmailChangePassword", "Account", new
+                        {
+                            userid = user.Id,
+                            token = resetToken
+                        }, protocol: HttpContext.Request.Scheme);
+
+                        Response response = _mailHelper.SendEmail(model.Username, "Email confirmation", $"<h1>Email Confirmation</h1>" +
+                        $"To allow the user, " +
+                        $"plase click in this link:</br></br><a href = \"{tokenLink}\">Click here to confirm your  email and change your password</a>");
+
+                        if (response.IsSuccess)
+                        {
+                            ViewBag.Message = "The instructions to allow you user have been sent to email";
+
+                            return RedirectToAction(nameof(Index));
+                        }
                     }
-
                 }
+
                 ModelState.AddModelError("", "Failed to create user.");
             }
 
@@ -111,14 +126,14 @@ namespace FlightTicketManager.Controllers
                 return new NotFoundViewResult("UserNotFound");
             }
 
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userHelper.GetUserByIdAsync(id);
             if (user == null)
             {
                 return new NotFoundViewResult("UserNotFound");
             }
 
-            var userRole = await _userManager.GetRolesAsync(user);
-            var allRoles = _roleManager.Roles;
+            var userRole = await _userHelper.GetUserRolesAsync(user);
+            var allRoles = _userHelper.GetAllRoles();
 
             var model = new AdminEditUserViewModel
             {
@@ -145,7 +160,7 @@ namespace FlightTicketManager.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Username); 
+                var user = await _userHelper.GetUserByEmailAsync(model.Username);
                 if (user == null)
                 {
                     return new NotFoundViewResult("UserNotFound");
@@ -155,7 +170,7 @@ namespace FlightTicketManager.Controllers
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
 
-                var result = await _userManager.UpdateAsync(user);
+                var result = await _userHelper.UpdateUserAsync(user);
                 if (!result.Succeeded)
                 {
                     ModelState.AddModelError("", "Failed to update user.");
@@ -163,16 +178,16 @@ namespace FlightTicketManager.Controllers
                 }
 
                 // Remove all roles from the user
-                var userRoles = await _userManager.GetRolesAsync(user);
+                var userRoles = await _userHelper.GetUserRolesAsync(user);
                 if (userRoles.Any())
                 {
-                    await _userManager.RemoveFromRolesAsync(user, userRoles);
+                    await _userHelper.RemoveRolesFromUserAsync(user, userRoles);
                 }
 
                 // Add the new role if selected
                 if (!string.IsNullOrEmpty(model.SelectedRole))
                 {
-                    await _userManager.AddToRoleAsync(user, model.SelectedRole);
+                    await _userHelper.AddUserToRoleAsync(user, model.SelectedRole);
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -189,7 +204,7 @@ namespace FlightTicketManager.Controllers
                 return new NotFoundViewResult("UserNotFound");
             }
 
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userHelper.GetUserByIdAsync(id);
             if (user == null)
             {
                 return new NotFoundViewResult("UserNotFound");
@@ -203,10 +218,10 @@ namespace FlightTicketManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userHelper.GetUserByIdAsync(id);
             if (user != null)
             {
-                var result = await _userManager.DeleteAsync(user);
+                var result = await _userHelper.DeleteUserAsync(user);
                 if (result.Succeeded)
                 {
                     return RedirectToAction(nameof(Index));

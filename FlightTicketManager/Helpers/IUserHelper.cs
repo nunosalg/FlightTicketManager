@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Models;
-using System.Security.Claims;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace FlightTicketManager.Helpers
 {
@@ -42,5 +41,15 @@ namespace FlightTicketManager.Helpers
         IQueryable<User> GetAllUsers();
 
         Task<IList<string>> GetUserRolesAsync(User user);
+
+        IQueryable<IdentityRole> GetAllRoles();
+
+        Task RemoveRolesFromUserAsync(User user, IEnumerable<string> roles);
+
+        Task<IdentityResult> DeleteUserAsync(User user);
+
+        Task<string> GeneratePasswordResetTokenAsync(User user);
+
+        Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
     }
 }

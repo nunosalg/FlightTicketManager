@@ -122,7 +122,7 @@ namespace FlightTicketManager.Controllers
 
                     if(response.IsSuccess)
                     {
-                        ViewBag.Message = "The instructions to allow you user has been sent to email";
+                        ViewBag.Message = "The instructions to allow you user have been sent to email";
                         return View(model);
                     }
 
@@ -152,20 +152,6 @@ namespace FlightTicketManager.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeUser(ChangeUserViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.SelectMany(x => x.Value.Errors)
-                                       .Select(x => x.ErrorMessage)
-                                       .ToList();
-
-                // Log ou debug para ver os erros
-                foreach (var error in errors)
-                {
-                    Console.WriteLine(error);  // Ou utilize logs apropriados.
-                }
-
-                return View(model);
-            }
             if (ModelState.IsValid)
             {
                 var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
@@ -263,7 +249,6 @@ namespace FlightTicketManager.Controllers
                         };
 
                         return this.Created(string.Empty, results);
-
                     }
                 }
             }
@@ -275,26 +260,145 @@ namespace FlightTicketManager.Controllers
         {
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
             {
-                return NotFound();
+                return new NotFoundViewResult("UserNotFound");
             }
 
             var user = await _userHelper.GetUserByIdAsync(userId);
             if (user == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("UserNotFound");
             }
 
             var result = await _userHelper.ConfirmEmailAsync(user, token);
             if (!result.Succeeded)
             {
-                return NotFound();
+                return new NotFoundViewResult("UserNotFound");
             }
 
             return View();
+        }
 
+        public async Task<IActionResult> ConfirmEmailChangePassword(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return new NotFoundViewResult("UserNotFound");
+            }
+
+            var user = await _userHelper.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return new NotFoundViewResult("UserNotFound");
+            }
+
+            var model = new ResetPasswordViewModel
+            {
+                Email = user.Email,
+                Token = token
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmEmailChangePassword(ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    var result = await _userHelper.ResetPasswordAsync(user, model.Token, model.NewPassword);
+                    if (result.Succeeded)
+                    {
+                        return this.RedirectToAction("Login");
+                    }
+                    else
+                    {
+                        this.ModelState.AddModelError("", result.Errors.FirstOrDefault().Description);
+                    }
+                }
+                else
+                {
+                    this.ModelState.AddModelError(string.Empty, "User not found.");
+                }
+            }
+
+            return this.View(model);
+        }
+
+        public IActionResult RecoverPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RecoverPassword(RecoverPasswordViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "The email doesn't correspond to a registered user.");
+                    return View(model);
+                }
+
+                var myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+
+                var link = this.Url.Action(
+                    "ResetPassword",
+                    "Account",
+                    new { token = myToken }, protocol: HttpContext.Request.Scheme);
+
+                Response response = _mailHelper.SendEmail(model.Email, "Flight Ticket Manager Password Reset", $"<h1>Shop Password Reset</h1>" +
+                $"To reset the password click in this link:</br></br>" +
+                $"<a href = \"{link}\">Reset Password</a>");
+
+                if (response.IsSuccess)
+                {
+                    this.ViewBag.Message = "The instructions to recover your password have been sent to your email.";
+                }
+
+                return this.View();
+
+            }
+
+            return this.View(model);
+        }
+
+        public IActionResult ResetPassword(string token)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(model.Email);
+            if (user != null)
+            {
+                var result = await _userHelper.ResetPasswordAsync(user, model.Token, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    this.ViewBag.Message = "Password reset successful.";
+                    return View();
+                }
+
+                this.ViewBag.Message = "Error while resetting the password.";
+                return View(model);
+            }
+
+            this.ViewBag.Message = "User not found.";
+            return View(model);
         }
 
         public IActionResult NotAuthorized()
+        {
+            return View();
+        }
+
+        public IActionResult UserNotFound()
         {
             return View();
         }
