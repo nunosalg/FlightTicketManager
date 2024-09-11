@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
 using FlightTicketManager.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlightTicketManager.Controllers
 {
@@ -83,13 +84,21 @@ namespace FlightTicketManager.Controllers
                 var user = await _userHelper.GetUserByEmailAsync(model.Username);
                 if(user == null)
                 {
+                    var existingUser = await _userHelper.GetUserByIdNumberAsync(model.IdNumber);
+                    if (existingUser != null)
+                    {
+                        ModelState.AddModelError("", "An account with this ID number already exists.");
+                        return View(model);
+                    }
+
                     user = new User
                     {
                         FirstName = model.FirstName,
                         LastName = model.LastName,
                         Email = model.Username,
                         UserName = model.Username,
-                        BirthDate = model.BirthDate
+                        BirthDate = model.BirthDate,
+                        IdNumber = model.IdNumber,
                     };
 
                     if (model.ImageFile != null && model.ImageFile.Length > 0)
@@ -100,7 +109,7 @@ namespace FlightTicketManager.Controllers
                     }
 
                     var result = await _userHelper.AddUserAsync(user, model.Password);
-                    if(result != IdentityResult.Success)
+                    if (result != IdentityResult.Success)
                     {
                         ModelState.AddModelError("", "Couldn't create user.");
                         return View(model);
@@ -114,13 +123,13 @@ namespace FlightTicketManager.Controllers
                     {
                         userid = user.Id,
                         token = myToken
-                    }, protocol:HttpContext.Request.Scheme);
+                    }, protocol: HttpContext.Request.Scheme);
 
                     Response response = _mailHelper.SendEmail(model.Username, "Email confirmation", $"<h1>Email Confirmation</h1>" +
                         $"To allow the user, " +
                         $"plase click in this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
 
-                    if(response.IsSuccess)
+                    if (response.IsSuccess)
                     {
                         ViewBag.Message = "The instructions to allow you user have been sent to email";
                         return View(model);

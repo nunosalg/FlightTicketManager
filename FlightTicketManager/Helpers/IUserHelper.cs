@@ -51,5 +51,7 @@ namespace FlightTicketManager.Helpers
         Task<string> GeneratePasswordResetTokenAsync(User user);
 
         Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
+
+        Task<User> GetUserByIdNumberAsync(string idNumber);
     }
 }

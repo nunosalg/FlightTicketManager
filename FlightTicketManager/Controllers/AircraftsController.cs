@@ -75,6 +75,7 @@ namespace FlightTicketManager.Controllers
                 }
 
                 var aircraft = _converterHelper.ToAircraft(model, path, true);
+                aircraft.GenerateSeats();
 
                 aircraft.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
 
@@ -121,6 +122,7 @@ namespace FlightTicketManager.Controllers
                     }
 
                     var aircraft = _converterHelper.ToAircraft(model, path, false);
+                    aircraft.UpdateCapacity(model.Capacity);
 
                     aircraft.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                     await _aircraftRepository.UpdateAsync(aircraft);

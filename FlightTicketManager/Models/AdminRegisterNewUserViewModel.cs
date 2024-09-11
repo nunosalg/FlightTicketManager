@@ -24,6 +24,12 @@ namespace FlightTicketManager.Models
 
 
         [Required]
+        [Display(Name = "Identification number")]
+        [StringLength(8)]
+        public string IdNumber { get; set; }
+
+
+        [Required]
         public string SelectedRole { get; set; }
 
 

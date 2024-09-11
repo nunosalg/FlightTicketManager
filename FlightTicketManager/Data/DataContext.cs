@@ -10,6 +10,10 @@ namespace FlightTicketManager.Data
 
         public DbSet<City> Cities { get; set; }
 
+        public DbSet<Flight> Flights { get; set; }
+
+        public DbSet<Ticket> Tickets { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
             
@@ -20,6 +24,10 @@ namespace FlightTicketManager.Data
         {
             modelBuilder.Entity<City>()
                 .HasIndex(c => c.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.IdNumber)
                 .IsUnique();
 
             base.OnModelCreating(modelBuilder);

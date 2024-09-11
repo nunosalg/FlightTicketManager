@@ -31,6 +31,12 @@
             </div>
 
             <div class="form-group">
+                <label asp-for="IdNumber">Identification Number</label>
+                <input asp-for="IdNumber" class="form-control" />
+                <span asp-validation-for="IdNumber" class="text-warning"></span>
+            </div>
+
+            <div class="form-group">
                 <label asp-for="ImageFile" class="control-label"></label>
                 <input asp-for="ImageFile" class="form-control" type="file" />
                 <span asp-validation-for="ImageFile" class="text-danger"></span>

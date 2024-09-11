@@ -5,6 +5,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Models;
+using FlightTicketManager.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlightTicketManager.Helpers
 {
@@ -13,15 +15,18 @@ namespace FlightTicketManager.Helpers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly DataContext _context;
 
         public UserHelper(
             UserManager<User> userManager, 
             SignInManager<User> signInManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            DataContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _context = context;
         }
 
         public async Task<IdentityResult> AddUserAsync(User user, string password)
@@ -141,6 +146,12 @@ namespace FlightTicketManager.Helpers
         public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password)
         {
             return await _userManager.ResetPasswordAsync(user, token, password);
+        }
+
+        public async Task<User> GetUserByIdNumberAsync(string idNumber)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.IdNumber == idNumber);
         }
     }
 }

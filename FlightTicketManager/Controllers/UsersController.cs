@@ -8,6 +8,7 @@ using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlightTicketManager.Controllers
 {
@@ -73,13 +74,21 @@ namespace FlightTicketManager.Controllers
                 var user = await _userHelper.GetUserByEmailAsync(model.Username);
                 if (user == null)
                 {
+                    var existingUser = await _userHelper.GetUserByIdNumberAsync(model.IdNumber);
+                    if (existingUser != null)
+                    {
+                        return new NotFoundViewResult("IdNumberAlreadyExists");
+                    }
+
+
                     user = new User
                     {
-                        UserName = model.Username,
-                        Email = model.Username,
                         FirstName = model.FirstName,
                         LastName = model.LastName,
-                        BirthDate = model.BirthDate
+                        Email = model.Username,
+                        UserName = model.Username,
+                        BirthDate = model.BirthDate,
+                        IdNumber = model.IdNumber,
                     };
 
                     string password = new Random().ToString();
@@ -231,6 +240,11 @@ namespace FlightTicketManager.Controllers
         }
 
         public IActionResult UserNotFound()
+        {
+            return View();
+        }
+
+        public IActionResult IdNumberAlreadyExists()
         {
             return View();
         }

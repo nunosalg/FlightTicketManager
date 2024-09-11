@@ -11,6 +11,8 @@ namespace FlightTicketManager.Data.Entities
 
         public DateTime BirthDate { get; set; }
 
+        public string IdNumber { get; set; }
+
         public string AvatarUrl { get; set; }
 
         public string AvatarFullPath

@@ -38,7 +38,8 @@ namespace FlightTicketManager.Data
                     LastName = "Salgueiro",
                     Email = "nunotestescet87@gmail.com",
                     UserName = "nunotestescet87@gmail.com",
-                    BirthDate = new DateTime(1990, 10, 24)
+                    BirthDate = new DateTime(1990, 10, 24),
+                    IdNumber = "12345678"
                 };
 
                 var result = await _userHelper.AddUserAsync(user, "123456");

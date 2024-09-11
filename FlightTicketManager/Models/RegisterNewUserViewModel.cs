@@ -22,6 +22,12 @@ namespace FlightTicketManager.Models
         public DateTime BirthDate { get; set; }
 
 
+        [Required]
+        [Display(Name = "Identification number")]
+        [StringLength(8)]
+        public string IdNumber { get; set; }
+
+
         [Display(Name = "Avatar")]
         public IFormFile ImageFile { get; set; }
 
