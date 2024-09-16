@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
+using FlightTicketManager.Data.Repositories;
 
 namespace FlightTicketManager.Data
 {
@@ -12,12 +13,17 @@ namespace FlightTicketManager.Data
     {
         private readonly DataContext _context;
         private readonly IUserHelper _userHelper;
+        private readonly IAircraftRepository _aircraftRepository;
         private Random _random;
 
-        public SeedDb(DataContext context, IUserHelper userHelper)
+        public SeedDb(
+            DataContext context, 
+            IUserHelper userHelper,
+            IAircraftRepository aircraftRepository)
         {
             _context = context;
             _userHelper = userHelper;
+            _aircraftRepository = aircraftRepository;
             _random = new Random();
         }
 
@@ -65,6 +71,7 @@ namespace FlightTicketManager.Data
                 AddAircraft("Airbus329", "Ryanair", user);
                 AddAircraft("Airbus339", "EasyJet", user);
                 AddAircraft("Airbus339", "TAP", user);
+
                 await _context.SaveChangesAsync();
             }
 
@@ -74,6 +81,23 @@ namespace FlightTicketManager.Data
                 AddCity("Madrid", "ES");
                 AddCity("Rome", "IT");
                 AddCity("Paris", "FR");
+
+                await _context.SaveChangesAsync();
+            }
+
+            if (!_context.Flights.Any())
+            {
+                var departureDateTime = new DateTime(2024, 9, 12, 14, 30, 0); 
+                var flightDuration = new TimeSpan(2, 30, 0);
+                await AddFlight(departureDateTime, flightDuration, "Lisbon", "Rome", 3, user);
+                
+                departureDateTime = new DateTime(2024, 10, 11, 8, 30, 0);
+                flightDuration = new TimeSpan(1, 30, 0);
+                await AddFlight(departureDateTime, flightDuration, "Lisbon", "Paris", 2, user);
+
+                departureDateTime = new DateTime(2024, 12, 11, 7, 30, 0);
+                flightDuration = new TimeSpan(4, 30, 0);
+                await AddFlight(departureDateTime, flightDuration, "Lisbon", "Oslo", 1, user);
 
                 await _context.SaveChangesAsync();
             }
@@ -90,14 +114,42 @@ namespace FlightTicketManager.Data
 
         private void AddAircraft(string description, string airline, User user)
         {
-            _context.Aircrafts.Add(new Aircraft
+            var aircraft = new Aircraft
             {
                 Description = description,
                 Airline = airline,
                 Capacity = _random.Next(150, 300),
                 IsActive = true,
                 User = user
-            });
+            };
+
+            aircraft.GenerateSeats();
+            _context.Aircrafts.Add(aircraft);
+        }
+
+        private async Task AddFlight(DateTime departureDateTime, TimeSpan duration, string origin, string destination, int aircraftId, User user)
+        {
+            var aircraft = _context.Aircrafts.Local.FirstOrDefault(a => a.Id == aircraftId);
+
+            if (aircraft == null)
+            {
+                // Get the aircraft in the database and attach it to the context 
+                aircraft = await _aircraftRepository.GetByIdAsync(aircraftId);
+                _context.Aircrafts.Attach(aircraft);
+            }
+
+            var flight = new Flight
+            {
+                DepartureDateTime = departureDateTime,
+                FlightDuration = duration,
+                Origin = origin,
+                Destination = destination,
+                Aircraft = aircraft,
+                User = user
+            };
+
+            flight.InitializeAvailableSeats();
+            _context.Flights.Add(flight);
         }
     }
 }

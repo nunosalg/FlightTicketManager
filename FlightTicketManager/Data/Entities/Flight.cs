@@ -15,7 +15,7 @@ namespace FlightTicketManager.Data.Entities
 
         [Required]
         [Display(Name = "Departure")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy hh:mm tt}", ApplyFormatInEditMode = false)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = false)]
         public DateTime DepartureDateTime { get; set; }
 
 
@@ -25,7 +25,7 @@ namespace FlightTicketManager.Data.Entities
 
 
         [Display(Name = "Arrival")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy hh:mm tt}", ApplyFormatInEditMode = false)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = false)]
         public DateTime ArrivalTime => DepartureDateTime + FlightDuration;
 
 
@@ -41,13 +41,10 @@ namespace FlightTicketManager.Data.Entities
         public Aircraft Aircraft { get; set; }
 
 
-        public string AvailableSeatsJson { get; set; }
+        public List<string> AvailableSeats { get; set; } 
 
 
-        [NotMapped]
-        public List<string> AvailableSeats => Aircraft.Seats;
-
-
+        [Display(Name = "Available seats")]
         public int AvailableSeatsNumber => AvailableSeats.Count;
 
 
@@ -57,5 +54,17 @@ namespace FlightTicketManager.Data.Entities
 
         [Required]
         public User User { get; set; }
+
+
+        /// <summary>
+        /// Initializes the available seats according to the aircraft list of seats
+        /// </summary>
+        public void InitializeAvailableSeats()
+        {
+            if (Aircraft != null)
+            {
+                AvailableSeats = new List<string>(Aircraft.Seats);
+            }
+        }
     }
 }

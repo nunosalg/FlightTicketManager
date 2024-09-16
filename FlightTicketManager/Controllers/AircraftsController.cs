@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using FlightTicketManager.Data;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
+using FlightTicketManager.Data.Repositories;
 
 namespace FlightTicketManager.Controllers
 {

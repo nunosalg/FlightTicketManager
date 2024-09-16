@@ -1,4 +1,5 @@
-﻿using FlightTicketManager.Data.Entities;
+﻿using System.Threading.Tasks;
+using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Models;
 
 namespace FlightTicketManager.Helpers
@@ -8,5 +9,9 @@ namespace FlightTicketManager.Helpers
         Aircraft ToAircraft(AircraftViewModel model, string path, bool isNew);
 
         AircraftViewModel ToAircraftViewModel(Aircraft aircraft);
+
+        Task<Flight> ToFlightAsync(FlightViewModel model, int aircraftId, User user);
+
+        Task<FlightViewModel> ToFlightViewModel(Flight flight, int aircraftId, User user);
     }
 }

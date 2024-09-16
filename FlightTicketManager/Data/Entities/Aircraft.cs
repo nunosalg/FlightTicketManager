@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace FlightTicketManager.Data.Entities
 {
@@ -32,21 +31,7 @@ namespace FlightTicketManager.Data.Entities
         public bool IsActive { get; set; }
 
 
-        public string SeatsJson { get; set; }
-
-
-        [NotMapped]
-        public List<string> Seats
-        {
-            get
-            {
-                return string.IsNullOrEmpty(SeatsJson) ? new List<string>() : JsonConvert.DeserializeObject<List<string>>(SeatsJson);
-            }
-            set
-            {
-                SeatsJson = JsonConvert.SerializeObject(value);
-            }
-        }
+        public List<string> Seats { get; set; }
 
 
         public User User { get; set; }
@@ -64,6 +49,10 @@ namespace FlightTicketManager.Data.Entities
                 return $"https://localhost:44306{ImageUrl.Substring(1)}";
             }
         }
+
+
+        public string AircraftData => $"{Description} {Airline} {Seats.Count}";
+
 
         /// <summary>
         /// Generates the seats of the aircraft based on its capacity.

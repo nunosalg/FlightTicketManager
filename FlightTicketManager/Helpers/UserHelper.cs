@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Models;
 using FlightTicketManager.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace FlightTicketManager.Helpers
 {

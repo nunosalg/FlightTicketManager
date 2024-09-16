@@ -11,7 +11,6 @@ using Microsoft.IdentityModel.Tokens;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
 using FlightTicketManager.Data.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace FlightTicketManager.Controllers
 {

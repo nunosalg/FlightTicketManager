@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using FlightTicketManager.Data;
+using FlightTicketManager.Data.Repositories;
 
 namespace FlightTicketManager.Controllers.API
 {

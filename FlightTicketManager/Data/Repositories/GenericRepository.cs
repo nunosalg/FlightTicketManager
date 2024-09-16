@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using FlightTicketManager.Data.Entities;
 
-namespace FlightTicketManager.Data
+namespace FlightTicketManager.Data.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class, IEntity
     {

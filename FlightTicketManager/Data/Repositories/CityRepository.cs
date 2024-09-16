@@ -1,6 +1,6 @@
 ﻿using FlightTicketManager.Data.Entities;
 
-namespace FlightTicketManager.Data
+namespace FlightTicketManager.Data.Repositories
 {
     public class CityRepository : GenericRepository<City>, ICityRepository
     {

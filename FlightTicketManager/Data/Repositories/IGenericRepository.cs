@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 
-namespace FlightTicketManager.Data
+namespace FlightTicketManager.Data.Repositories
 {
     public interface IGenericRepository<T> where T : class
     {
         IQueryable<T> GetAll();
 
-        Task<T> GetByIdAsync(int id);  
+        Task<T> GetByIdAsync(int id);
 
         Task CreateAsync(T entity);
 
@@ -15,7 +15,7 @@ namespace FlightTicketManager.Data
 
         Task DeleteAsync(T entity);
 
-        Task<bool> ExistAsync(int id); 
+        Task<bool> ExistAsync(int id);
 
     }
 }

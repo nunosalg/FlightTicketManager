@@ -1,0 +1,67 @@
+﻿@model FlightTicketManager.Models.FlightViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+    var minDate = DateTime.UtcNow;
+}
+
+<h1>Edit</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                @* <label asp-for="FlightNumber" class="control-label"></label>
+                @Model.FlightNumber *@
+            </div>
+            <div class="form-group">
+                <label asp-for="DepartureDateTime" class="control-label"></label>
+                <ejs-datetimepicker name="DepartureDateTime" id="datetimepicker" min="@minDate" value="@Model.DepartureDateTime" format="dd/MM/yyyy HH:mm" placeholder="Select the date and time"></ejs-datetimepicker>
+                <span asp-validation-for="DepartureDateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FlightDuration" class="control-label"></label>
+                <input asp-for="FlightDuration" class="form-control" />
+                <span asp-validation-for="FlightDuration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SelectedOrigin" class="control-label"></label>
+                <select asp-for="SelectedOrigin" asp-items="Model.Cities" class="form-control">
+                    <option value="">-- Select origin --</option>
+                </select>
+                <span asp-validation-for="SelectedOrigin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SelectedDestination" class="control-label"></label>
+                <select asp-for="SelectedDestination" asp-items="Model.Cities" class="form-control">
+                    <option value="">-- Select destination --</option>
+                </select>
+                <span asp-validation-for="SelectedDestination" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SelectedAircraft" class="control-label"></label>
+                <select asp-for="SelectedAircraft" asp-items="Model.Aircrafts" class="form-control">
+                    <option value="">-- Select aircraft --</option>
+                </select>
+                <span asp-validation-for="SelectedAircraft" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

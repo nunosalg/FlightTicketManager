@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
-using System;
-using Microsoft.EntityFrameworkCore;
 
 namespace FlightTicketManager.Controllers
 {
@@ -79,7 +78,6 @@ namespace FlightTicketManager.Controllers
                     {
                         return new NotFoundViewResult("IdNumberAlreadyExists");
                     }
-
 
                     user = new User
                     {

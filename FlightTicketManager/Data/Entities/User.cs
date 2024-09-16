@@ -27,5 +27,7 @@ namespace FlightTicketManager.Data.Entities
                 return $"https://localhost:44306{AvatarUrl.Substring(1)}";
             }
         }
+
+        public string Fullname => $"{FirstName} {LastName}";
     }
 }

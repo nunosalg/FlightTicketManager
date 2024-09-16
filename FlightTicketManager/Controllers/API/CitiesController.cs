@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using FlightTicketManager.Data;
+using FlightTicketManager.Data.Repositories;
 
 namespace FlightTicketManager.Controllers.API
 {

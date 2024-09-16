@@ -12,6 +12,7 @@ using Syncfusion.Licensing;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication;
+using FlightTicketManager.Data.Repositories;
 
 namespace FlightTicketManager
 {
@@ -71,6 +72,8 @@ namespace FlightTicketManager
 
             services.AddScoped<IAircraftRepository, AircraftRepository>();
             services.AddScoped<ICityRepository, CityRepository>();
+            services.AddScoped<IFlightRepository, FlightRepository>();
+
 
             services.ConfigureApplicationCookie(options =>
             {
