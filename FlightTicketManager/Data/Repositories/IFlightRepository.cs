@@ -6,8 +6,8 @@ namespace FlightTicketManager.Data.Repositories
 {
     public interface IFlightRepository : IGenericRepository<Flight>
     {
-        public IQueryable GetAllWithUsersAndAircrafts();
+        public IQueryable GetAllWithUsersAircraftsAndCities();
 
-        Task<Flight> GetByIdWithUsersAndAircraftsAsync(int id);
+        Task<Flight> GetByIdWithUsersAircraftsAndCitiesAsync(int id);
     }
 }

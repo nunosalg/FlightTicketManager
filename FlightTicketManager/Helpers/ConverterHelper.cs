@@ -9,11 +9,16 @@ namespace FlightTicketManager.Helpers
     public class ConverterHelper : IConverterHelper
     {
         private readonly IAircraftRepository _aircraftRepository;
+        private readonly ICityRepository _cityRepository;
         private readonly IUserHelper _userHelper;
 
-        public ConverterHelper(IAircraftRepository aircraftRepository, IUserHelper userHelper)
+        public ConverterHelper(
+            IAircraftRepository aircraftRepository, 
+            ICityRepository cityRepository,
+            IUserHelper userHelper)
         {
             _aircraftRepository = aircraftRepository;
+            _cityRepository = cityRepository;
             _userHelper = userHelper;
         }
         public Aircraft ToAircraft(AircraftViewModel model, string path, bool isNew)
@@ -46,17 +51,19 @@ namespace FlightTicketManager.Helpers
             };
         }
 
-        public async Task<Flight> ToFlightAsync(FlightViewModel model, int aircraftId, User user)
+        public async Task<Flight> ToFlightAsync(FlightViewModel model, int originId, int destinationId, int aircraftId, User user)
         {
             var aircraft = await _aircraftRepository.GetByIdWithTrackingAsync(aircraftId);
+            var origin = await _cityRepository.GetByIdWithTrackingAsync(originId);
+            var destination = await _cityRepository.GetByIdWithTrackingAsync(destinationId);
 
             return new Flight
             {
                 Id = model.Id,
                 DepartureDateTime = model.DepartureDateTime,
                 FlightDuration = model.FlightDuration,
-                Origin = model.SelectedOrigin,
-                Destination = model.SelectedDestination,
+                Origin = origin,
+                Destination = destination,
                 Aircraft = aircraft,
                 User = user,
                 AvailableSeats = aircraft.Seats != null ? new List<string>(aircraft.Seats) : new List<string>()
@@ -73,11 +80,11 @@ namespace FlightTicketManager.Helpers
                 Id = flight.Id,
                 DepartureDateTime = flight.DepartureDateTime,
                 FlightDuration = flight.FlightDuration,
-                SelectedOrigin = flight.Origin,
-                SelectedDestination = flight.Destination,
+                SelectedOrigin = flight.Origin.Id,
+                SelectedDestination = flight.Destination.Id,
                 SelectedAircraft = aircraft.Id,
                 User = user,
-                AvailableSeats = flight.AvailableSeats != null ? flight.AvailableSeats : new List<string>()
+                AvailableSeats = flight.AvailableSeats ?? new List<string>()
             };
         }
     }

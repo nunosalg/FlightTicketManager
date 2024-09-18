@@ -11,6 +11,10 @@ namespace FlightTicketManager.Models
         public int Id { get; set; }
 
 
+        [Display(Name = "Flight Number")]
+        public string FlightNumber => Id > 9 ? $"FTM{Id}" : $"FTM0{Id}";
+
+
         [Required]
         [Display(Name = "Departure")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = false)]
@@ -24,7 +28,7 @@ namespace FlightTicketManager.Models
 
         [Required]
         [Display(Name = "Selected origin")]
-        public string SelectedOrigin { get; set; }
+        public int SelectedOrigin { get; set; }
 
 
         public IEnumerable<SelectListItem> Cities { get; set; }
@@ -32,7 +36,7 @@ namespace FlightTicketManager.Models
 
         [Required]
         [Display(Name = "Selected destination")]
-        public string SelectedDestination { get; set; }
+        public int SelectedDestination { get; set; }
 
 
         [Required]

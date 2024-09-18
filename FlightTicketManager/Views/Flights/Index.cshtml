@@ -65,10 +65,18 @@
                     @Html.DisplayFor(modelItem => item.ArrivalTime)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Origin)
+                    @Html.DisplayFor(modelItem => item.Origin.Name) <br />
+                    @if (!string.IsNullOrEmpty(item.Origin.FlagUrl))
+                    {
+                        <img src="@Url.Content(item.Origin.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
+                    }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Destination)
+                    @Html.DisplayFor(modelItem => item.Destination.Name) <br />
+                    @if (!string.IsNullOrEmpty(item.Destination.FlagUrl))
+                    {
+                        <img src="@Url.Content(item.Destination.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.AvailableSeatsNumber)

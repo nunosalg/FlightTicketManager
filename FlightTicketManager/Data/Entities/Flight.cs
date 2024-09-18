@@ -30,11 +30,11 @@ namespace FlightTicketManager.Data.Entities
 
 
         [Required]
-        public string Origin { get; set; }
+        public City Origin { get; set; }
 
 
         [Required]
-        public string Destination { get; set; }
+        public City Destination { get; set; }
 
 
         [Required]

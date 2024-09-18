@@ -13,19 +13,23 @@ namespace FlightTicketManager.Data.Repositories
         {
             _context = context;
         }
-        public IQueryable GetAllWithUsersAndAircrafts()
+        public IQueryable GetAllWithUsersAircraftsAndCities()
         {
             return _context.Flights
                 .Include(f => f.User)
                 .Include(f => f.Aircraft)
+                .Include(f => f.Origin)
+                .Include(f => f.Destination)
                 .OrderBy(f => f.DepartureDateTime);
         }
 
-        public async Task<Flight> GetByIdWithUsersAndAircraftsAsync(int id)
+        public async Task<Flight> GetByIdWithUsersAircraftsAndCitiesAsync(int id)
         {
             return await _context.Flights
                 .Include(f => f.User)
                 .Include(f => f.Aircraft)
+                .Include(f => f.Origin)
+                .Include(f => f.Destination)
                 .FirstOrDefaultAsync(f => f.Id == id);
         }
     }

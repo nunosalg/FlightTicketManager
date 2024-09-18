@@ -36,7 +36,7 @@ namespace FlightTicketManager.Controllers
         // GET: Flights
         public IActionResult Index()
         {
-            return View(_flightRepository.GetAllWithUsersAndAircrafts());
+            return View(_flightRepository.GetAllWithUsersAircraftsAndCities());
         }
 
         // GET: Flights/Details/5
@@ -47,7 +47,7 @@ namespace FlightTicketManager.Controllers
                 return new NotFoundViewResult("FlightNotFound");
             }
 
-            var flight = await _flightRepository.GetByIdWithUsersAndAircraftsAsync(id.Value);
+            var flight = await _flightRepository.GetByIdWithUsersAircraftsAndCitiesAsync(id.Value);
             if (flight == null)
             {
                 return new NotFoundViewResult("FlightNotFound");
@@ -63,7 +63,7 @@ namespace FlightTicketManager.Controllers
             {
                 Cities = _cityRepository.GetAll().Select(city => new SelectListItem
                 {
-                    Value = city.Name,
+                    Value = city.Id.ToString(),
                     Text = city.Name,
                 }).ToList(),
 
@@ -85,18 +85,27 @@ namespace FlightTicketManager.Controllers
         {
             if (ModelState.IsValid)
             {
-                model.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
+                try
+                {
+                    model.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
 
-                var flight = await _converterHelper.ToFlightAsync(model, model.SelectedAircraft, model.User);
+                    var flight = await _converterHelper.ToFlightAsync(model, model.SelectedOrigin, model.SelectedDestination, model.SelectedAircraft, model.User);
+
+                    await _flightRepository.CreateAsync(flight);
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException)
+                {
+                    
+                    ModelState.AddModelError("", "Flight duration can't be longer than 24 hours");
+                }
                 
-                await _flightRepository.CreateAsync(flight);
-
-                return RedirectToAction(nameof(Index));
             }
 
             model.Cities = _cityRepository.GetAll().Select(city => new SelectListItem
             {
-                Value = city.Name,
+                Value = city.Id.ToString(),
                 Text = city.Name,
             }).ToList();
 
@@ -117,7 +126,7 @@ namespace FlightTicketManager.Controllers
                 return new NotFoundViewResult("FlightNotFound");
             }
 
-            var flight = await _flightRepository.GetByIdWithUsersAndAircraftsAsync(id.Value);
+            var flight = await _flightRepository.GetByIdWithUsersAircraftsAndCitiesAsync(id.Value);
             if (flight == null)
             {
                 return new NotFoundViewResult("FlightNotFound");
@@ -126,9 +135,9 @@ namespace FlightTicketManager.Controllers
 
             model.Cities = _cityRepository.GetAll().Select(city => new SelectListItem
             {
-                Value = city.Name,
+                Value = city.Id.ToString(),
                 Text = city.Name,
-                Selected = city.Name == flight.Origin || city.Name == flight.Destination
+                Selected = city.Id == flight.Origin.Id || city.Id == flight.Destination.Id
             }).ToList();
 
             model.Aircrafts = _aircraftRepository.GetAllActive().Select(aircraft => new SelectListItem
@@ -138,8 +147,8 @@ namespace FlightTicketManager.Controllers
                 Selected = aircraft.Id == flight.Aircraft.Id
             }).ToList();
 
-            model.SelectedOrigin = flight.Origin;  
-            model.SelectedDestination = flight.Destination;
+            model.SelectedOrigin = flight.Origin.Id;
+            model.SelectedDestination = flight.Destination.Id;
             model.SelectedAircraft = flight.Aircraft.Id;
 
             return View(model);
@@ -163,7 +172,7 @@ namespace FlightTicketManager.Controllers
                 {
                     model.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
 
-                    var flight = await _converterHelper.ToFlightAsync(model, model.SelectedAircraft, model.User);
+                    var flight = await _converterHelper.ToFlightAsync(model, model.SelectedOrigin, model.SelectedDestination, model.SelectedAircraft, model.User);
 
                     flight.InitializeAvailableSeats();
 
@@ -193,7 +202,7 @@ namespace FlightTicketManager.Controllers
                 return new NotFoundViewResult("FlightNotFound");
             }
 
-            var flight = await _flightRepository.GetByIdWithUsersAndAircraftsAsync(id.Value);
+            var flight = await _flightRepository.GetByIdWithUsersAircraftsAndCitiesAsync(id.Value);
             if (flight == null)
             {
                 return new NotFoundViewResult("FlightNotFound");

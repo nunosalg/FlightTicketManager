@@ -81,6 +81,7 @@ namespace FlightTicketManager.Data
                 AddCity("Madrid", "ES");
                 AddCity("Rome", "IT");
                 AddCity("Paris", "FR");
+                AddCity("Oslo", "NO");
 
                 await _context.SaveChangesAsync();
             }
@@ -89,15 +90,15 @@ namespace FlightTicketManager.Data
             {
                 var departureDateTime = new DateTime(2024, 9, 12, 14, 30, 0); 
                 var flightDuration = new TimeSpan(2, 30, 0);
-                await AddFlight(departureDateTime, flightDuration, "Lisbon", "Rome", 3, user);
+                await AddFlight(departureDateTime, flightDuration, 1, 3, 3, user);
                 
                 departureDateTime = new DateTime(2024, 10, 11, 8, 30, 0);
                 flightDuration = new TimeSpan(1, 30, 0);
-                await AddFlight(departureDateTime, flightDuration, "Lisbon", "Paris", 2, user);
+                await AddFlight(departureDateTime, flightDuration, 1, 4, 2, user);
 
                 departureDateTime = new DateTime(2024, 12, 11, 7, 30, 0);
                 flightDuration = new TimeSpan(4, 30, 0);
-                await AddFlight(departureDateTime, flightDuration, "Lisbon", "Oslo", 1, user);
+                await AddFlight(departureDateTime, flightDuration, 1, 5, 1, user);
 
                 await _context.SaveChangesAsync();
             }
@@ -127,9 +128,11 @@ namespace FlightTicketManager.Data
             _context.Aircrafts.Add(aircraft);
         }
 
-        private async Task AddFlight(DateTime departureDateTime, TimeSpan duration, string origin, string destination, int aircraftId, User user)
+        private async Task AddFlight(DateTime departureDateTime, TimeSpan duration, int originId, int destinationId, int aircraftId, User user)
         {
             var aircraft = _context.Aircrafts.Local.FirstOrDefault(a => a.Id == aircraftId);
+            var origin = _context.Cities.Local.FirstOrDefault(o => o.Id == originId);
+            var destination = _context.Cities.Local.FirstOrDefault(d => d.Id == destinationId);
 
             if (aircraft == null)
             {
