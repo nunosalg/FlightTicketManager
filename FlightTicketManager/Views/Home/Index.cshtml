@@ -1,8 +1,158 @@
-﻿@{
+﻿@model FlightTicketManager.Models.FlightSearchViewModel
+@{
     ViewData["Title"] = "Home Page";
+    var minDate = DateTime.UtcNow;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1>
+    The best destinations to travel and the best ticket prices
+</h1>
+<p>
+    Check for flights here!
+</p>
+
+@if (!this.User.IsInRole("Admin"))
+{
+    <h1>Search Flights</h1>
+
+    <form asp-action="SearchFlights" method="post">
+        <div class="form-group">
+            <label asp-for="DepartureDateTime" class="control-label"></label>
+            <ejs-datetimepicker name="DepartureDateTime" id="datetimepicker" min="@minDate" format="dd/MM/yyyy HH:mm" placeholder="Select the date and time"></ejs-datetimepicker>
+            <span asp-validation-for="DepartureDateTime" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="SelectedOrigin" class="control-label"></label>
+            <select asp-for="SelectedOrigin" asp-items="Model.Cities" class="form-control">
+                <option value="">-- Select Origin --</option>
+            </select>
+            <span asp-validation-for="SelectedOrigin" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="SelectedDestination" class="control-label"></label>
+            <select asp-for="SelectedDestination" asp-items="Model.Cities" class="form-control">
+                <option value="">-- Select Destination --</option>
+            </select>
+            <span asp-validation-for="SelectedDestination" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Search" class="btn btn-primary" />
+        </div>
+    </form>
+
+    @if (Model.FlightsResults != null && Model.FlightsResults.Any())
+    {
+        <h2>Available Flights</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Flight Number
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DepartureDateTime)
+                    </th>
+                    <th>
+                        Duration
+                    </th>
+                    <th>
+                        Arrival
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.SelectedOrigin)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.SelectedDestination)
+                    </th>
+                    <th>
+                        Aircraft
+                    </th>
+                    <th>
+                        Available Seats
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var flight in Model.FlightsResults)
+                {
+                    <tr>
+                        <td>@flight.FlightNumber</td>
+                        <td>@flight.DepartureDateTime</td>
+                        <td>@flight.FlightDuration</td>
+                        <td>@flight.ArrivalTime</td>
+                        <td>
+                            @flight.Origin.Name
+                            @if (!string.IsNullOrEmpty(flight.Origin.FlagUrl))
+                            {
+                                <img src="@Url.Content(flight.Origin.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
+                            }
+                        </td>
+                        <td>
+                            @flight.Destination.Name
+                            @if (!string.IsNullOrEmpty(flight.Destination.FlagUrl))
+                            {
+                                <img src="@Url.Content(flight.Destination.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
+                            }
+                        </td>
+                        <td>@flight.Aircraft.AircraftData</td>
+                        <td>@flight.AvailableSeatsNumber</td>
+                        <td>
+                            @if (!this.User.IsInRole("Employee"))
+                            {
+                                <a asp-action="BuyTicket" asp-route-id="@flight.Id">Buy ticket</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if (Model.FlightsResults != null)
+    {
+        <p>No flights found.</p>
+    }
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var originSelect = document.getElementById('SelectedOrigin');
+        var destinationSelect = document.getElementById('SelectedDestination');
+
+        function updateOptions() {
+            var origin = originSelect.value;
+            var destination = destinationSelect.value;
+
+            for (var i = 0; i < destinationSelect.options.length; i++) {
+                var option = destinationSelect.options[i];
+                if (option.value === origin) {
+                    option.disabled = true;
+                } else {
+                    option.disabled = false;
+                }
+            }
+
+            for (var i = 0; i < originSelect.options.length; i++) {
+                var option = originSelect.options[i];
+                if (option.value === destination) {
+                    option.disabled = true;
+                } else {
+                    option.disabled = false;
+                }
+            }
+        }
+
+        originSelect.addEventListener('change', updateOptions);
+        destinationSelect.addEventListener('change', updateOptions);
+
+        updateOptions();
+    });
+</script>

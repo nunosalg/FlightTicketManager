@@ -28,21 +28,24 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Aircrafts" asp-action="Index">Aircrafts</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AvailableFlights">Available Flights</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Cities" asp-action="Index">Cities</a>
-                        </li>
+                        @if (this.User.Identity.IsAuthenticated && this.User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Aircrafts" asp-action="Index">Aircrafts</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Cities" asp-action="Index">Cities</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+                            </li>
+                        }
                         @if (this.User.Identity.IsAuthenticated && this.User.IsInRole("Employee"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Flights" asp-action="Index">Flights</a>
-                            </li>
-                        }
-                        @if (this.User.Identity.IsAuthenticated && this.User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
                             </li>
                         }
                         <li class="nav-item">

@@ -172,7 +172,11 @@ namespace FlightTicketManager.Controllers
                 {
                     model.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
 
-                    var flight = await _converterHelper.ToFlightAsync(model, model.SelectedOrigin, model.SelectedDestination, model.SelectedAircraft, model.User);
+                    var flight = await _converterHelper.ToFlightAsync(
+                        model, model.SelectedOrigin, 
+                        model.SelectedDestination, 
+                        model.SelectedAircraft, 
+                        model.User);
 
                     flight.InitializeAvailableSeats();
 
