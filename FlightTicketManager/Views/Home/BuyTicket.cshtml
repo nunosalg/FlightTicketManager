@@ -1,0 +1,73 @@
+﻿@model FlightTicketManager.Models.BuyTicketViewModel
+
+@{
+    ViewData["Title"] = "Buy Ticket";
+    var maxDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+}
+
+<h1>Buy Ticket</h1>
+
+<form asp-action="BuyTicket" method="post">
+    <input type="hidden" asp-for="FlightId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Flight.FlightNumber" class="control-label">Flight Number</label>
+        <input asp-for="Flight.FlightNumber" class="form-control" disabled />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Flight.DepartureDateTime" class="control-label">Departure Date and Time</label>
+        <input asp-for="Flight.DepartureDateTime" class="form-control" disabled />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Flight.Origin" class="control-label">Origin</label>
+        <input asp-for="Flight.Origin.Name" class="form-control" disabled />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Flight.Destination" class="control-label">Destination</label>
+        <input asp-for="Flight.Destination.Name" class="form-control" disabled />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PassengerName">Passenger name</label>
+        <input asp-for="PassengerName" class="form-control" />
+        <span asp-validation-for="PassengerName" class="text-warning"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PassengerId">Passenger ID</label>
+        <input asp-for="PassengerId" class="form-control" />
+        <span asp-validation-for="PassengerId" class="text-warning"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PassengerBirthDate" class="control-label">Passenger birthdate</label>
+        <ejs-datetimepicker name="PassengerBirthDate" id="datetimepicker" format="dd/MM/yyyy" max="maxDate" placeholder="Select a date"></ejs-datetimepicker>
+        <span asp-validation-for="PassengerBirthDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Seat" class="control-label">Select Seat</label>
+        <select asp-for="Seat" class="form-control" asp-items="@(new SelectList(Model.AvailableSeats))">
+            <option value="">-- Select a seat --</option>
+        </select>
+        <span asp-validation-for="Seat" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Buy Ticket" class="btn btn-primary" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="AvailableFlights">Back to Available Flights</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

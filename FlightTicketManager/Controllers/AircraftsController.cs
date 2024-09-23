@@ -99,7 +99,7 @@ namespace FlightTicketManager.Controllers
                 return new NotFoundViewResult("AircraftNotFound");
             }
 
-            var model = _converterHelper.ToAircraftViewModel(aircraft);
+            var model = _converterHelper.ToAircraftViewModelAsync(aircraft);
             return View(model);
         }
 

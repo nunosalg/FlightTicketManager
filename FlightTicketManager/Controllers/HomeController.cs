@@ -1,11 +1,13 @@
-﻿using System.Diagnostics;
+﻿using System.Linq;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using FlightTicketManager.Models;
 using FlightTicketManager.Data.Repositories;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Threading.Tasks;
+using FlightTicketManager.Helpers;
 
 namespace FlightTicketManager.Controllers
 {
@@ -14,15 +16,24 @@ namespace FlightTicketManager.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ICityRepository _cityRepository;
         private readonly IFlightRepository _flightRepository;
+        private readonly ITicketRepository _ticketRepository;
+        private readonly IUserHelper _userHelper;
+        private readonly IConverterHelper _converterHelper;
 
         public HomeController(
             ILogger<HomeController> logger,
             ICityRepository cityRepository,
-            IFlightRepository flightRepository)
+            IFlightRepository flightRepository,
+            ITicketRepository ticketRepository,
+            IUserHelper userHelper,
+            IConverterHelper converterHelper)
         {
             _logger = logger;
             _cityRepository = cityRepository;
             _flightRepository = flightRepository;
+            _ticketRepository = ticketRepository;
+            _userHelper = userHelper;
+            _converterHelper = converterHelper;
         }
 
         // GET: Home/Index
@@ -70,6 +81,110 @@ namespace FlightTicketManager.Controllers
         public IActionResult AvailableFlights()
         {
             return View(_flightRepository.GetAvailableWithAircraftsAndCities());
+        }
+
+        // GET: BuyTicket
+        public async Task<IActionResult> BuyTicket(int? id)
+        {
+            if (!this.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account", new { ReturnUrl = Url.Action("BuyTicket", "Home", new { id }) });
+            }
+
+            if (id == null)
+            {
+                return new NotFoundViewResult("FlightNotFound");
+            }
+
+            var flight = await _flightRepository.GetByIdWithUsersAircraftsAndCitiesAsync(id.Value);
+            if (flight == null)
+            {
+                return new NotFoundViewResult("FlightNotFound");
+            }
+
+            var model = new BuyTicketViewModel
+            {
+                FlightId = flight.Id,
+                Flight = flight,
+                AvailableSeats = flight.AvailableSeats, 
+                Buyer = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name),
+            };
+
+            return View(model);
+        }
+
+        // POST: BuyTicket
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BuyTicket(BuyTicketViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var flight = await _flightRepository.GetByIdWithUsersAircraftsAndCitiesAsync(model.FlightId);
+                if (flight == null)
+                {
+                    return new NotFoundViewResult("FlightNotFound");
+                }
+
+                var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
+
+                if (await _ticketRepository.PassengerAlreadyHasTicketInFlight(flight.Id, model.PassengerId))
+                {
+                    model.Flight = flight;
+                    model.PassengerName = model.PassengerName;
+                    model.PassengerId = model.PassengerId;
+                    model.PassengerBirthDate = model.PassengerBirthDate;
+                    model.AvailableSeats = flight.AvailableSeats;
+
+                    ModelState.AddModelError(string.Empty, "You already have a ticket for this flight.");
+
+                    return View(model);
+                }
+
+                var ticket = await _converterHelper.ToTicketAsync(model, user, flight.Id);
+
+                flight.AvailableSeats.Remove(model.Seat);
+                flight.TicketsList.Add(ticket);
+
+                await _ticketRepository.CreateAsync(ticket);
+                await _flightRepository.UpdateAsync(flight);
+
+                return RedirectToAction("TicketConfirmation", new { id = ticket.Id });
+            }
+            
+            model.AvailableSeats = (await _flightRepository.GetByIdAsync(model.FlightId)).AvailableSeats;
+
+            return View(model);
+        }
+
+        // GET: TicketConfirmation
+        public async Task<IActionResult> TicketConfirmation(int id)
+        {
+            var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(id);
+            if (ticket == null)
+            {
+                return new NotFoundViewResult("TicketNotFound");
+            }
+
+            return View(ticket);
+        }
+
+        public async Task<IActionResult> MyFlights()
+        {
+            var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
+            if (user == null)
+            {
+                return new NotFoundViewResult("UserNotFound");
+            }
+
+            var tickets = await _ticketRepository.GetByPassenger(user.Id).ToListAsync();
+
+            return View(tickets);
+        }
+
+        public IActionResult TicketNotFound()
+        {
+            return View();
         }
 
         public IActionResult Privacy()

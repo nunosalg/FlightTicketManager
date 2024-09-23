@@ -10,15 +10,18 @@ namespace FlightTicketManager.Helpers
     {
         private readonly IAircraftRepository _aircraftRepository;
         private readonly ICityRepository _cityRepository;
+        private readonly IFlightRepository _flightRepository;
         private readonly IUserHelper _userHelper;
 
         public ConverterHelper(
             IAircraftRepository aircraftRepository, 
             ICityRepository cityRepository,
+            IFlightRepository flightRepository,
             IUserHelper userHelper)
         {
             _aircraftRepository = aircraftRepository;
             _cityRepository = cityRepository;
+            _flightRepository = flightRepository;
             _userHelper = userHelper;
         }
         public Aircraft ToAircraft(AircraftViewModel model, string path, bool isNew)
@@ -36,7 +39,7 @@ namespace FlightTicketManager.Helpers
             };
         }
 
-        public AircraftViewModel ToAircraftViewModel(Aircraft aircraft)
+        public AircraftViewModel ToAircraftViewModelAsync(Aircraft aircraft)
         {
             return new AircraftViewModel
             {
@@ -51,7 +54,7 @@ namespace FlightTicketManager.Helpers
             };
         }
 
-        public async Task<Flight> ToFlightAsync(FlightViewModel model, int originId, int destinationId, int aircraftId, User user)
+        public async Task<Flight> ToFlightAsync(FlightViewModel model, int originId, int destinationId, int aircraftId, User user, List<Ticket> tickets)
         {
             var aircraft = await _aircraftRepository.GetByIdWithTrackingAsync(aircraftId);
             var origin = await _cityRepository.GetByIdWithTrackingAsync(originId);
@@ -66,11 +69,12 @@ namespace FlightTicketManager.Helpers
                 Destination = destination,
                 Aircraft = aircraft,
                 User = user,
-                AvailableSeats = aircraft.Seats != null ? new List<string>(aircraft.Seats) : new List<string>()
+                AvailableSeats = aircraft.Seats != null ? new List<string>(aircraft.Seats) : new List<string>(),
+                TicketsList = tickets,
             };
         }
 
-        public async Task<FlightViewModel> ToFlightViewModel(Flight flight, int aircraftId, User flightUser)
+        public async Task<FlightViewModel> ToFlightViewModelAsync(Flight flight, int aircraftId, User flightUser, List<Ticket> tickets)
         {
             var aircraft = await _aircraftRepository.GetByIdWithTrackingAsync(aircraftId);
             var user = await _userHelper.GetUserByEmailAsync(flightUser.UserName);
@@ -84,7 +88,39 @@ namespace FlightTicketManager.Helpers
                 SelectedDestination = flight.Destination.Id,
                 SelectedAircraft = aircraft.Id,
                 User = user,
-                AvailableSeats = flight.AvailableSeats ?? new List<string>()
+                AvailableSeats = flight.AvailableSeats ?? new List<string>(),
+                TicketsList = tickets
+            };
+        }
+
+        public async Task<Ticket> ToTicketAsync(BuyTicketViewModel model, User clientUser, int flightId)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(clientUser.UserName);
+            var flight = await _flightRepository.GetByIdWithUsersAircraftsAndCitiesAsync(flightId);
+            return new Ticket
+            {
+                Flight = flight,
+                Seat = model.Seat,
+                TicketBuyer = user,
+                PassengerId = model.PassengerId,
+                PassengerName = model.PassengerName,
+                PassengerBirthDate = model.PassengerBirthDate,
+            };
+        }
+
+        public TicketConfirmationViewModel ToTicketConfirmationViewModel(Ticket ticket)
+        {
+            return new TicketConfirmationViewModel
+            {
+                TicketId = ticket.Id,
+                FlightNumber = ticket.Flight.FlightNumber,
+                Origin = ticket.Flight.Origin.Name,
+                Destination = ticket.Flight.Destination.Name,
+                DepartureDateTime = ticket.Flight.DepartureDateTime,
+                Seat = ticket.Seat,
+                PassengerName = ticket.PassengerName,
+                PassengerId = ticket.PassengerId,
+                PassengerBirthDate = ticket.PassengerBirthDate,
             };
         }
     }

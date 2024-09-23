@@ -50,5 +50,7 @@ namespace FlightTicketManager.Models
 
 
         public User User { get; set; }
+
+        public List<Ticket> TicketsList { get; set; }
     }
 }

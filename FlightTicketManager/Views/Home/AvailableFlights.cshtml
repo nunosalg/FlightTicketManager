@@ -44,7 +44,7 @@
                     @Html.DisplayFor(modelItem => item.FlightNumber)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Aircraft.Id)
+                    @Html.DisplayFor(modelItem => item.Aircraft.AircraftData)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DepartureDateTime)
@@ -57,17 +57,11 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Origin.Name) <br />
-                    @if (!string.IsNullOrEmpty(item.Origin.FlagUrl))
-                    {
-                        <img src="@Url.Content(item.Origin.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
-                    }
+                    <img id="flagImageOrigin" src="@Url.Content(item.Origin.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Destination.Name) <br />
-                    @if (!string.IsNullOrEmpty(item.Destination.FlagUrl))
-                    {
-                        <img src="@Url.Content(item.Destination.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
-                    }
+                    <img id="flagImageDestination" src="@Url.Content(item.Destination.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.AvailableSeatsNumber)
@@ -88,3 +82,4 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+

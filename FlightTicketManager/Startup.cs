@@ -73,6 +73,7 @@ namespace FlightTicketManager
             services.AddScoped<IAircraftRepository, AircraftRepository>();
             services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<IFlightRepository, FlightRepository>();
+            services.AddScoped<ITicketRepository, TicketRepository>();
 
 
             services.ConfigureApplicationCookie(options =>

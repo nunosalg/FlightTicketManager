@@ -1,0 +1,42 @@
+﻿@model List<FlightTicketManager.Data.Entities.Ticket>
+
+@{
+    ViewData["Title"] = "My Flights";
+}
+
+<h1>My Flights</h1>
+
+@if (!Model.Any())
+{
+    <p>No flights found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Flight Number</th>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Departure Date</th>
+                <th>Duration</th>
+                <th>Aircraft</th>
+                <th>Seat</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in Model)
+            {
+                <tr>
+                    <td>@ticket.Flight.FlightNumber</td>
+                    <td>@ticket.Flight.Origin.Name</td>
+                    <td>@ticket.Flight.Destination.Name</td>
+                    <td>@ticket.Flight.DepartureDateTime.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@ticket.Flight.FlightDuration</td>
+                    <td>@ticket.Flight.Aircraft.AircraftData</td>
+                    <td>@ticket.Seat</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

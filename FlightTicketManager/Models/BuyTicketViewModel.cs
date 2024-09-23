@@ -1,25 +1,23 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using FlightTicketManager.Data.Entities;
 
-namespace FlightTicketManager.Data.Entities
+namespace FlightTicketManager.Models
 {
-    public class Ticket : IEntity
+    public class BuyTicketViewModel
     {
-        public int Id { get; set; }
+        public int FlightId { get; set; }
 
 
-        [Required]
         public Flight Flight { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Please select a seat.")]
+        [Display(Name = "Select Seat")]
         public string Seat { get; set; }
 
-
-        [Required]
-        [Display(Name ="Ticket buyer")]
-        public User TicketBuyer { get; set; }
+        public User Buyer { get; set; }
 
 
         [Required]
@@ -29,11 +27,15 @@ namespace FlightTicketManager.Data.Entities
 
         [Required]
         [Display(Name = "Passenger identification")]
+        [StringLength(8)]
         public string PassengerId { get; set; }
 
 
         [Required]
         [Display(Name = "Passenger birthdate")]
         public DateTime PassengerBirthDate { get; set; }
+
+
+        public List<string> AvailableSeats { get; set; }
     }
 }

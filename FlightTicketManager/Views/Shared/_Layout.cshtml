@@ -42,6 +42,12 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
                             </li>
                         }
+                        @if (this.User.Identity.IsAuthenticated && this.User.IsInRole("Customer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="MyFlights">My Flights</a>
+                            </li>
+                        }
                         @if (this.User.Identity.IsAuthenticated && this.User.IsInRole("Employee"))
                         {
                             <li class="nav-item">

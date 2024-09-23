@@ -49,7 +49,7 @@ namespace FlightTicketManager.Data.Entities
 
 
         [NotMapped]
-        public List<Ticket> TicketsList { get; set; }
+        public List<Ticket> TicketsList { get; set; } = new List<Ticket>();
 
 
         [Required]

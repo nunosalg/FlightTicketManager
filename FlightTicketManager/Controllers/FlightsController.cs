@@ -89,7 +89,14 @@ namespace FlightTicketManager.Controllers
                 {
                     model.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
 
-                    var flight = await _converterHelper.ToFlightAsync(model, model.SelectedOrigin, model.SelectedDestination, model.SelectedAircraft, model.User);
+                    var flight = await _converterHelper.ToFlightAsync(
+                        model, 
+                        model.SelectedOrigin, 
+                        model.SelectedDestination, 
+                        model.SelectedAircraft, 
+                        model.User, 
+                        model.TicketsList
+                    );
 
                     await _flightRepository.CreateAsync(flight);
 
@@ -131,7 +138,7 @@ namespace FlightTicketManager.Controllers
             {
                 return new NotFoundViewResult("FlightNotFound");
             }
-            var model = await _converterHelper.ToFlightViewModel(flight, flight.Aircraft.Id, flight.User);
+            var model = await _converterHelper.ToFlightViewModelAsync(flight, flight.Aircraft.Id, flight.User, flight.TicketsList);
 
             model.Cities = _cityRepository.GetAll().Select(city => new SelectListItem
             {
@@ -176,7 +183,9 @@ namespace FlightTicketManager.Controllers
                         model, model.SelectedOrigin, 
                         model.SelectedDestination, 
                         model.SelectedAircraft, 
-                        model.User);
+                        model.User,
+                        model.TicketsList
+                    );
 
                     flight.InitializeAvailableSeats();
 
