@@ -13,9 +13,6 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.FlightNumber)
             </th>
             <th>
@@ -39,7 +36,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.AvailableSeatsNumber)
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -47,13 +43,10 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.User.Fullname)
-                </td>
-                <td>
                     @Html.DisplayFor(modelItem => item.FlightNumber)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Aircraft.AircraftData)
+                    @Html.DisplayFor(modelItem => item.Aircraft.Id)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DepartureDateTime)
@@ -81,18 +74,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.AvailableSeatsNumber)
                 </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
             </tr>
         }
     </tbody>
 </table>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

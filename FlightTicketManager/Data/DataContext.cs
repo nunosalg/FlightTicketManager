@@ -55,6 +55,15 @@ namespace FlightTicketManager.Data
                 .Metadata
                 .SetValueComparer(valueComparer);
 
+            modelBuilder.Entity<Flight>()
+                .HasMany(f => f.TicketsList)
+                .WithOne(t => t.Flight)
+                .IsRequired();
+
+            modelBuilder.Entity<Ticket>()
+                .Property(t => t.Price)
+                .HasColumnType("decimal(18, 2)");
+
             base.OnModelCreating(modelBuilder);
         }
     }

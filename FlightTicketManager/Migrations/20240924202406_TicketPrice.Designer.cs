@@ -4,14 +4,16 @@ using FlightTicketManager.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FlightTicketManager.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240924202406_TicketPrice")]
+    partial class TicketPrice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -130,7 +132,7 @@ namespace FlightTicketManager.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("FlightId")
+                    b.Property<int?>("FlightId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("PassengerBirthDate")
@@ -417,10 +419,8 @@ namespace FlightTicketManager.Migrations
             modelBuilder.Entity("FlightTicketManager.Data.Entities.Ticket", b =>
                 {
                     b.HasOne("FlightTicketManager.Data.Entities.Flight", "Flight")
-                        .WithMany("TicketsList")
-                        .HasForeignKey("FlightId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("FlightId");
 
                     b.HasOne("FlightTicketManager.Data.Entities.User", "TicketBuyer")
                         .WithMany()
@@ -480,11 +480,6 @@ namespace FlightTicketManager.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("FlightTicketManager.Data.Entities.Flight", b =>
-                {
-                    b.Navigation("TicketsList");
                 });
 #pragma warning restore 612, 618
         }

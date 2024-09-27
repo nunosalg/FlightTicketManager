@@ -17,7 +17,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FlightTicketManager</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Fly With Salgueiro</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -42,16 +42,28 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
                             </li>
                         }
-                        @if (this.User.Identity.IsAuthenticated && this.User.IsInRole("Customer"))
+                        @if (this.User.Identity.IsAuthenticated && (this.User.IsInRole("Customer") || this.User.IsInRole("Admin")))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="MyFlights">My Flights</a>
+                            </li>
+                        }
+                        @if (this.User.Identity.IsAuthenticated && (this.User.IsInRole("Customer") || this.User.IsInRole("Admin")))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="MyFlightsHistory">History</a>
                             </li>
                         }
                         @if (this.User.Identity.IsAuthenticated && this.User.IsInRole("Employee"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Flights" asp-action="Index">Flights</a>
+                            </li>
+                        }
+                        @if (this.User.Identity.IsAuthenticated && this.User.IsInRole("Employee"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Flights" asp-action="FlightsHistory">History</a>
                             </li>
                         }
                         <li class="nav-item">

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using FlightTicketManager.Data.Entities;
 using System.Collections.Generic;
 using System;
+using System.Security.Cryptography;
 
 namespace FlightTicketManager.Data.Repositories
 {
@@ -20,6 +21,27 @@ namespace FlightTicketManager.Data.Repositories
         {
             return _context.Flights
                 .Where(f => f.DepartureDateTime >= DateTime.UtcNow)
+                .Include(f => f.Aircraft)
+                .Include(f => f.Origin)
+                .Include(f => f.Destination)
+                .OrderBy(f => f.DepartureDateTime);
+        }
+
+        public IQueryable GetAvailableWithUsersAircraftsAndCities()
+        {
+            return _context.Flights
+                .Where(f => f.DepartureDateTime >= DateTime.UtcNow)
+                .Include(f => f.User)
+                .Include(f => f.Aircraft)
+                .Include(f => f.Origin)
+                .Include(f => f.Destination)
+                .OrderBy(f => f.DepartureDateTime);
+        }
+
+        public IQueryable GetFlightsHistoryWithAircraftsAndCities()
+        {
+            return _context.Flights
+                .Where(f => f.DepartureDateTime < DateTime.UtcNow)
                 .Include(f => f.Aircraft)
                 .Include(f => f.Origin)
                 .Include(f => f.Destination)
@@ -70,6 +92,56 @@ namespace FlightTicketManager.Data.Repositories
             }
 
             return await query.ToListAsync();
+        }
+
+        public async Task<Flight> GetByIdWithTrackingAsync(int id)
+        {
+            return await _context.Flights.FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+        public List<Flight> GetConflictingFlights(
+            Aircraft selectedAircraft, 
+            DateTime selectedDate, 
+            string selectedOrigin, 
+            string selectedDestination, 
+            Flight currentFlight = null)
+        {
+            var conflictingFlights = _context.Flights
+                .Include(f => f.Aircraft)
+                .Include(f => f.Origin)
+                .Include(f => f.Destination)
+                .Where(v => v.Aircraft.Id == selectedAircraft.Id &&
+                            v.DepartureDateTime.Date == selectedDate.Date &&
+                            ((selectedOrigin != v.Origin.Name && selectedOrigin != v.Destination.Name) ||
+                             (selectedDestination != v.Origin.Name && selectedDestination != v.Destination.Name)))
+                .ToList();
+
+            // If a current flight is being edited, exclude it from the conflict check
+            if (currentFlight != null)
+            {
+                conflictingFlights.RemoveAll(f => f.Id == currentFlight.Id);
+            }
+
+            return conflictingFlights;
+        }
+
+        public List<Flight> GetSameDayFlights(Aircraft selectedAircraft, DateTime selectedDate, Flight currentFlight = null)
+        {
+            var sameDayFlights = _context.Flights
+                .Include(f => f.Aircraft)
+                .Include(f => f.Origin)
+                .Include(f => f.Destination)
+                .Where(v => v.Aircraft.Id == selectedAircraft.Id &&
+                            v.DepartureDateTime.Date == selectedDate.Date)
+                .ToList();
+
+            // Exclude the current flight
+            if (currentFlight != null)
+            {
+                sameDayFlights.RemoveAll(f => f.Id == currentFlight.Id);
+            }
+
+            return sameDayFlights;
         }
     }
 }

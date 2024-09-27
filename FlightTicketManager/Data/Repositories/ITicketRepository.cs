@@ -10,6 +10,8 @@ namespace FlightTicketManager.Data.Repositories
 
         Task<bool> PassengerAlreadyHasTicketInFlight(int flightId, string passengerId);
 
-        IQueryable<Ticket> GetByPassenger(string passengerId);
+        IQueryable GetTicketsByUser(string userId);
+
+        IQueryable GetTicketsHistoryByUser(string userId);
     }
 }

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using FlightTicketManager.Data.Repositories;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
+using FlightTicketManager.Data.Entities;
+using System;
 
 namespace FlightTicketManager.Controllers
 {
@@ -36,7 +38,7 @@ namespace FlightTicketManager.Controllers
         // GET: Flights
         public IActionResult Index()
         {
-            return View(_flightRepository.GetAllWithUsersAircraftsAndCities());
+            return View(_flightRepository.GetAvailableWithUsersAircraftsAndCities());
         }
 
         // GET: Flights/Details/5
@@ -88,26 +90,36 @@ namespace FlightTicketManager.Controllers
                 try
                 {
                     model.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
+                    var selectedAircraft = await _aircraftRepository.GetByIdAsync(model.SelectedAircraft);
+                    var selectedOrigin = await _cityRepository.GetByIdAsync(model.SelectedOrigin);
+                    var selectedDestination = await _cityRepository.GetByIdAsync(model.SelectedDestination);
 
-                    var flight = await _converterHelper.ToFlightAsync(
-                        model, 
-                        model.SelectedOrigin, 
-                        model.SelectedDestination, 
-                        model.SelectedAircraft, 
-                        model.User, 
-                        model.TicketsList
-                    );
+                    if (!AircraftHasOverlappingFlights(
+                        model.DepartureDateTime, 
+                        selectedOrigin.Name, 
+                        selectedDestination.Name, 
+                        model.FlightDuration,
+                        selectedAircraft))
+                    {
+                        var flight = await _converterHelper.ToFlightAsync(
+                            model, 
+                            model.SelectedOrigin, 
+                            model.SelectedDestination, 
+                            model.SelectedAircraft, 
+                            model.User, 
+                            model.TicketsList
+                        );
 
-                    await _flightRepository.CreateAsync(flight);
+                        await _flightRepository.CreateAsync(flight);
 
-                    return RedirectToAction(nameof(Index));
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
                 catch (DbUpdateException)
                 {
                     
                     ModelState.AddModelError("", "Flight duration can't be longer than 24 hours");
                 }
-                
             }
 
             model.Cities = _cityRepository.GetAll().Select(city => new SelectListItem
@@ -138,6 +150,7 @@ namespace FlightTicketManager.Controllers
             {
                 return new NotFoundViewResult("FlightNotFound");
             }
+
             var model = await _converterHelper.ToFlightViewModelAsync(flight, flight.Aircraft.Id, flight.User, flight.TicketsList);
 
             model.Cities = _cityRepository.GetAll().Select(city => new SelectListItem
@@ -178,18 +191,32 @@ namespace FlightTicketManager.Controllers
                 try
                 {
                     model.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
+                    var selectedAircraft = await _aircraftRepository.GetByIdAsync(model.SelectedAircraft);
+                    var selectedOrigin = await _cityRepository.GetByIdAsync(model.SelectedOrigin);
+                    var selectedDestination = await _cityRepository.GetByIdAsync(model.SelectedDestination);
+                    var currentFlight = await _flightRepository.GetByIdWithTrackingAsync(id);
 
-                    var flight = await _converterHelper.ToFlightAsync(
-                        model, model.SelectedOrigin, 
-                        model.SelectedDestination, 
-                        model.SelectedAircraft, 
-                        model.User,
-                        model.TicketsList
-                    );
+                    if (!AircraftHasOverlappingFlights(
+                        model.DepartureDateTime,
+                        selectedOrigin.Name,
+                        selectedDestination.Name,
+                        model.FlightDuration,
+                        selectedAircraft,
+                        currentFlight))
+                    {
+                        var flight = await _converterHelper.ToFlightAsync(
+                            model, model.SelectedOrigin,
+                            model.SelectedDestination,
+                            model.SelectedAircraft,
+                            model.User,
+                            model.TicketsList,
+                            currentFlight
+                        );
 
-                    flight.InitializeAvailableSeats();
+                        flight.InitializeAvailableSeats();
 
-                    await _flightRepository.UpdateAsync(flight);
+                        await _flightRepository.UpdateAsync(flight);
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -235,9 +262,93 @@ namespace FlightTicketManager.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        public IActionResult FlightsHistory()
+        {
+            return View(_flightRepository.GetFlightsHistoryWithAircraftsAndCities());
+        }
+
         public IActionResult FlightNotFound()
         {
             return View();
+        }
+
+        private bool AircraftHasOverlappingFlights(
+            DateTime selectedDate, 
+            string selectedOrigin, 
+            string selectedDestination, 
+            TimeSpan flightDuration, 
+            Aircraft selectedAircraft, 
+            Flight currentFlight = null)
+        {
+            int preparationTime = 60; // Preparation time for aircraft in minutes
+            int totalFlightMinutes = (int)flightDuration.TotalMinutes;
+
+            var conflictingFlights = _flightRepository.GetConflictingFlights(
+                selectedAircraft,
+                selectedDate,
+                selectedOrigin,
+                selectedDestination,
+                currentFlight);
+
+            // If any flight exists with a different route on the same day
+            if (conflictingFlights.Count > 0)
+            {
+                ModelState.AddModelError(string.Empty, "The aircraft has a different route scheduled on this day.");
+                return true;
+            }
+
+            // Get flights on the same date with the same aircraft
+            var sameDayFlights = _flightRepository.GetSameDayFlights(selectedAircraft, selectedDate, currentFlight);
+
+            foreach (var flight in sameDayFlights)
+            {
+                DateTime existingDeparture = flight.DepartureDateTime;
+                DateTime existingArrival = flight.DepartureDateTime + flight.FlightDuration;
+                DateTime newDeparture = selectedDate;
+
+                // If the new flight starts at the same time as an existing one
+                if (newDeparture == existingDeparture)
+                {
+                    ModelState.AddModelError(string.Empty, "The aircraft is already scheduled for a flight on this route at the same time.");
+                    return true;
+                }
+
+                // If the flight has the same origin and destination
+                if (selectedOrigin == flight.Origin.Name && selectedDestination == flight.Destination.Name)
+                {
+                    int preparationAndFlightTime = (totalFlightMinutes + preparationTime) * 2;
+
+                    // Check for overlapping flights
+                    if (newDeparture < existingDeparture && newDeparture > existingDeparture.AddMinutes(-preparationAndFlightTime))
+                    {
+                        ModelState.AddModelError(string.Empty, "The aircraft is scheduled for a flight on this route around the same time.");
+                        return true;
+                    }
+                    if (newDeparture > existingDeparture && newDeparture < existingDeparture.AddMinutes(preparationAndFlightTime))
+                    {
+                        ModelState.AddModelError(string.Empty, "The aircraft is scheduled for a flight on this route around the same time.");
+                        return true;
+                    }
+                }
+                // If the flight has swapped origin and destination
+                else if (selectedOrigin == flight.Destination.Name && selectedDestination == flight.Origin.Name)
+                {
+                    // Check for overlapping flights
+                    if (newDeparture < existingDeparture && newDeparture > existingDeparture.AddMinutes(-totalFlightMinutes - preparationTime))
+                    {
+                        ModelState.AddModelError(string.Empty, "The aircraft is scheduled for a flight with a different route around the same time.");
+                        return true;
+                    }
+                    if (newDeparture > existingDeparture && newDeparture < existingArrival.AddMinutes(preparationTime))
+                    {
+                        ModelState.AddModelError(string.Empty, "The aircraft is scheduled for a flight with a different route around the same time.");
+                        return true;
+                    }
+                }
+            }
+
+            return false; // No conflicts, flight can be created
         }
     }
 }

@@ -37,5 +37,10 @@ namespace FlightTicketManager.Models
 
 
         public List<string> AvailableSeats { get; set; }
+
+
+        [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
+        public decimal Price { get; set; }
+
     }
 }

@@ -32,6 +32,11 @@
     </div>
 
     <div class="form-group">
+        <label asp-for="Price" class="control-label">Price</label>
+        <input asp-for="Price" class="form-control" disabled />
+    </div>
+
+    <div class="form-group">
         <label asp-for="PassengerName">Passenger name</label>
         <input asp-for="PassengerName" class="form-control" />
         <span asp-validation-for="PassengerName" class="text-warning"></span>

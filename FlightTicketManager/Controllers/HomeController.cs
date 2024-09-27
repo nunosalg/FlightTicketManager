@@ -142,6 +142,7 @@ namespace FlightTicketManager.Controllers
                 }
 
                 var ticket = await _converterHelper.ToTicketAsync(model, user, flight.Id);
+                ticket.SetTicketPrice();
 
                 flight.AvailableSeats.Remove(model.Seat);
                 flight.TicketsList.Add(ticket);
@@ -177,10 +178,24 @@ namespace FlightTicketManager.Controllers
                 return new NotFoundViewResult("UserNotFound");
             }
 
-            var tickets = await _ticketRepository.GetByPassenger(user.Id).ToListAsync();
+            var tickets = _ticketRepository.GetTicketsByUser(user.Id);
 
             return View(tickets);
         }
+
+        public async Task<IActionResult> MyFlightsHistory()
+        {
+            var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
+            if (user == null)
+            {
+                return new NotFoundViewResult("UserNotFound");
+            }
+
+            var tickets = _ticketRepository.GetTicketsHistoryByUser(user.Id);
+
+            return View(tickets);
+        }
+
 
         public IActionResult TicketNotFound()
         {

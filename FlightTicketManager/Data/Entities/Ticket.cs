@@ -35,5 +35,29 @@ namespace FlightTicketManager.Data.Entities
         [Required]
         [Display(Name = "Passenger birthdate")]
         public DateTime PassengerBirthDate { get; set; }
+
+
+        [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
+        public decimal Price { get; set; }
+
+
+        public void SetTicketPrice()
+        {
+            this.Price = TicketPrice();
+        }
+
+
+        private decimal TicketPrice()
+        {
+            decimal costPerMinute = 0.5m;
+            decimal distanceInMinutes = (decimal)Flight.FlightDuration.TotalMinutes;
+            decimal ocupationCost = Flight.AvailableSeatsNumber * 0.1m;
+
+            decimal ticketPrice = costPerMinute * distanceInMinutes + ocupationCost;
+
+            return ticketPrice;
+        }
+
+        
     }
 }

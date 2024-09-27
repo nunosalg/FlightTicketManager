@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Data.Repositories;
+using FlightTicketManager.Migrations;
 
 namespace FlightTicketManager.Data
 {
@@ -15,16 +16,19 @@ namespace FlightTicketManager.Data
         private readonly DataContext _context;
         private readonly IUserHelper _userHelper;
         private readonly IAircraftRepository _aircraftRepository;
+        private readonly IFlightRepository _flightRepository;
         private Random _random;
 
         public SeedDb(
             DataContext context, 
             IUserHelper userHelper,
-            IAircraftRepository aircraftRepository)
+            IAircraftRepository aircraftRepository,
+            IFlightRepository flightRepository)
         {
             _context = context;
             _userHelper = userHelper;
             _aircraftRepository = aircraftRepository;
+            _flightRepository = flightRepository;
             _random = new Random();
         }
 
@@ -103,6 +107,43 @@ namespace FlightTicketManager.Data
 
                 await _context.SaveChangesAsync();
             }
+
+            if(!_context.Tickets.Any())
+            {
+                var passengerBirthdate = new DateTime(2005, 9, 12);
+                await AddTicket(1, "01A", user, "14151617", "Jose Maria", passengerBirthdate);
+                await AddTicket(2, "01A", user, "14151617", "Jose Maria", passengerBirthdate);
+                await AddTicket(3, "01A", user, "14151617", "Jose Maria", passengerBirthdate);
+            }
+        }
+
+        private async Task AddTicket(int flightId, string seat, User user, string passengerId, string passengerName, DateTime passengerBirthdate)
+        {
+            var flight = _context.Flights.Local.FirstOrDefault(f => f.Id == flightId);
+
+            if (flight == null)
+            {
+                flight = await _flightRepository.GetByIdAsync(flightId);
+                _context.Flights.Attach(flight);
+            }
+
+            var ticket = new Ticket
+            {
+                Flight = flight,
+                Seat = seat,
+                TicketBuyer = user,
+                PassengerId = passengerId,
+                PassengerName = passengerName,
+                PassengerBirthDate = passengerBirthdate,
+            };
+
+            ticket.SetTicketPrice();
+            flight.AvailableSeats.Remove(seat);
+            flight.TicketsList.Add(ticket);
+
+            _context.Tickets.Add(ticket);
+
+            await _flightRepository.UpdateAsync(flight);
         }
 
         private void AddCity(string name, string countryCode)

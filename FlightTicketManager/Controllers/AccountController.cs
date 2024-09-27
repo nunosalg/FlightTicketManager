@@ -83,13 +83,6 @@ namespace FlightTicketManager.Controllers
                 var user = await _userHelper.GetUserByEmailAsync(model.Username);
                 if(user == null)
                 {
-                    var existingUser = await _userHelper.GetUserByIdNumberAsync(model.IdNumber);
-                    if (existingUser != null)
-                    {
-                        ModelState.AddModelError("", "An account with this ID number already exists.");
-                        return View(model);
-                    }
-
                     user = new User
                     {
                         FirstName = model.FirstName,
@@ -97,15 +90,7 @@ namespace FlightTicketManager.Controllers
                         Email = model.Username,
                         UserName = model.Username,
                         BirthDate = model.BirthDate,
-                        IdNumber = model.IdNumber,
                     };
-
-                    if (model.ImageFile != null && model.ImageFile.Length > 0)
-                    {
-                        var path = await _imageHelper.UploadImageAsync(model.ImageFile, "users");
-
-                        user.AvatarUrl = path;
-                    }
 
                     var result = await _userHelper.AddUserAsync(user, model.Password);
                     if (result != IdentityResult.Success)
@@ -359,7 +344,7 @@ namespace FlightTicketManager.Controllers
                     "Account",
                     new { token = myToken }, protocol: HttpContext.Request.Scheme);
 
-                Response response = _mailHelper.SendEmail(model.Email, "Flight Ticket Manager Password Reset", $"<h1>Shop Password Reset</h1>" +
+                Response response = _mailHelper.SendEmail(model.Email, "Flight Ticket Manager Password Reset", $"<h1>FWS Password Reset</h1>" +
                 $"To reset the password click in this link:</br></br>" +
                 $"<a href = \"{link}\">Reset Password</a>");
 

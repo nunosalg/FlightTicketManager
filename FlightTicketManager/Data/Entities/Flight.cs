@@ -10,7 +10,7 @@ namespace FlightTicketManager.Data.Entities
         public int Id { get; set; }
 
         [Display(Name = "Flight Number")]
-        public string FlightNumber => Id > 9 ? $"FTM{Id}" : $"FTM0{Id}";
+        public string FlightNumber => Id > 9 ? $"FWS{Id}" : $"FWS0{Id}";
 
 
         [Required]
@@ -48,7 +48,6 @@ namespace FlightTicketManager.Data.Entities
         public int AvailableSeatsNumber => AvailableSeats.Count;
 
 
-        [NotMapped]
         public List<Ticket> TicketsList { get; set; } = new List<Ticket>();
 
 

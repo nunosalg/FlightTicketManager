@@ -11,7 +11,7 @@ namespace FlightTicketManager.Helpers
 
         AircraftViewModel ToAircraftViewModelAsync(Aircraft aircraft);
 
-        Task<Flight> ToFlightAsync(FlightViewModel model, int originId, int destinationId, int aircraftId, User user, List<Ticket> tickets);
+        Task<Flight> ToFlightAsync(FlightViewModel model, int originId, int destinationId, int aircraftId, User user, List<Ticket> tickets, Flight existingFlight = null);
 
         Task<FlightViewModel> ToFlightViewModelAsync(Flight flight, int aircraftId, User user, List<Ticket> tickets);
 

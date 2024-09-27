@@ -2,14 +2,14 @@
 @using Syncfusion.EJ2
 @{
     ViewData["Title"] = "Register";
-    var maxDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+    var maxDate = DateTime.Now;
 }
 
 <h1>Register</h1>
 
 <div class="row">
     <div class="col-md-4 offset-md-4">
-        <form method="post" enctype="multipart/form-data">
+        <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="form-group">
@@ -28,18 +28,6 @@
                 <label asp-for="BirthDate" class="control-label"></label>
                 <ejs-datetimepicker name="BirthDate" id="datetimepicker" format="dd/MM/yyyy" max="maxDate" placeholder="Select a date"></ejs-datetimepicker>
                 <span asp-validation-for="BirthDate" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="IdNumber">Identification Number</label>
-                <input asp-for="IdNumber" class="form-control" />
-                <span asp-validation-for="IdNumber" class="text-warning"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="ImageFile" class="control-label"></label>
-                <input asp-for="ImageFile" class="form-control" type="file" />
-                <span asp-validation-for="ImageFile" class="text-danger"></span>
             </div>
 
             <div class="form-group">

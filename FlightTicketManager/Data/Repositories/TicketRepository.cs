@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using FlightTicketManager.Data.Entities;
+using System;
 
 namespace FlightTicketManager.Data.Repositories
 {
@@ -25,7 +26,7 @@ namespace FlightTicketManager.Data.Repositories
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
-        public IQueryable<Ticket> GetByPassenger(string passengerId)
+        public IQueryable GetTicketsByUser(string userId)
         {
             return _context.Tickets
                 .Include(t => t.Flight)
@@ -34,7 +35,19 @@ namespace FlightTicketManager.Data.Repositories
                 .ThenInclude(f => f.Destination)
                 .Include(t => t.Flight)
                 .ThenInclude(t => t.Aircraft)
-                .Where(t => t.TicketBuyer.Id == passengerId);
+                .Where(t => t.TicketBuyer.Id == userId && t.Flight.DepartureDateTime > DateTime.Now);
+        }
+
+        public IQueryable GetTicketsHistoryByUser(string userId)
+        {
+            return _context.Tickets
+                .Include(t => t.Flight)
+                .ThenInclude(f => f.Origin)
+                .Include(t => t.Flight)
+                .ThenInclude(f => f.Destination)
+                .Include(t => t.Flight)
+                .ThenInclude(t => t.Aircraft)
+                .Where(t => t.TicketBuyer.Id == userId && t.Flight.DepartureDateTime < DateTime.Now);
         }
 
         public async Task<bool> PassengerAlreadyHasTicketInFlight(int flightId, string passengerId)

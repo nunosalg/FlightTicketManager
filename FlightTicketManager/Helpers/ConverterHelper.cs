@@ -54,24 +54,49 @@ namespace FlightTicketManager.Helpers
             };
         }
 
-        public async Task<Flight> ToFlightAsync(FlightViewModel model, int originId, int destinationId, int aircraftId, User user, List<Ticket> tickets)
+        public async Task<Flight> ToFlightAsync(
+            FlightViewModel model, 
+            int originId, 
+            int destinationId, 
+            int aircraftId, 
+            User user, 
+            List<Ticket> tickets,
+            Flight existingFlight = null)
         {
             var aircraft = await _aircraftRepository.GetByIdWithTrackingAsync(aircraftId);
             var origin = await _cityRepository.GetByIdWithTrackingAsync(originId);
             var destination = await _cityRepository.GetByIdWithTrackingAsync(destinationId);
 
-            return new Flight
+            if (existingFlight != null)
             {
-                Id = model.Id,
-                DepartureDateTime = model.DepartureDateTime,
-                FlightDuration = model.FlightDuration,
-                Origin = origin,
-                Destination = destination,
-                Aircraft = aircraft,
-                User = user,
-                AvailableSeats = aircraft.Seats != null ? new List<string>(aircraft.Seats) : new List<string>(),
-                TicketsList = tickets,
-            };
+                // Update properties of the existing flight
+                existingFlight.DepartureDateTime = model.DepartureDateTime;
+                existingFlight.FlightDuration = model.FlightDuration;
+                existingFlight.Origin = origin;
+                existingFlight.Destination = destination;
+                existingFlight.Aircraft = aircraft;
+                existingFlight.User = user;
+                existingFlight.AvailableSeats = aircraft.Seats != null ? new List<string>(aircraft.Seats) : new List<string>();
+                existingFlight.TicketsList = tickets;
+
+                return existingFlight; 
+            }
+            else
+            {
+                // Creates a new flight
+                return new Flight
+                {
+                    Id = model.Id,
+                    DepartureDateTime = model.DepartureDateTime,
+                    FlightDuration = model.FlightDuration,
+                    Origin = origin,
+                    Destination = destination,
+                    Aircraft = aircraft,
+                    User = user,
+                    AvailableSeats = aircraft.Seats != null ? new List<string>(aircraft.Seats) : new List<string>(),
+                    TicketsList = tickets,
+                };
+            }
         }
 
         public async Task<FlightViewModel> ToFlightViewModelAsync(Flight flight, int aircraftId, User flightUser, List<Ticket> tickets)
@@ -105,6 +130,7 @@ namespace FlightTicketManager.Helpers
                 PassengerId = model.PassengerId,
                 PassengerName = model.PassengerName,
                 PassengerBirthDate = model.PassengerBirthDate,
+                Price = model.Price,
             };
         }
 
