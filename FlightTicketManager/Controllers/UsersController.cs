@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
+using FlightTicketManager.Data.Repositories;
 
 namespace FlightTicketManager.Controllers
 {
@@ -16,13 +17,19 @@ namespace FlightTicketManager.Controllers
     {
         private readonly IUserHelper _userHelper;
         private readonly IMailHelper _mailHelper;
+        private readonly IFlightRepository _flightRepository;
+        private readonly ITicketRepository _ticketRepository;
 
         public UsersController(
             IUserHelper userHelper,
-            IMailHelper mailHelper)
+            IMailHelper mailHelper,
+            IFlightRepository flightRepository,
+            ITicketRepository ticketRepository)
         {
             _userHelper = userHelper;
             _mailHelper = mailHelper;
+            _flightRepository = flightRepository;
+            _ticketRepository = ticketRepository;
         }
 
         // GET: Users
@@ -106,7 +113,7 @@ namespace FlightTicketManager.Controllers
                             token = resetToken
                         }, protocol: HttpContext.Request.Scheme);
 
-                        Response response = _mailHelper.SendEmail(model.Username, "Email confirmation", $"<h1>Email Confirmation</h1>" +
+                        Response response = await _mailHelper.SendEmailAsync(model.Username, "Email confirmation", $"<h1>Email Confirmation</h1>" +
                         $"To allow the user, " +
                         $"plase click in this link:</br></br><a href = \"{tokenLink}\">Click here to confirm your  email and change your password</a>");
 
@@ -226,6 +233,24 @@ namespace FlightTicketManager.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var user = await _userHelper.GetUserByIdAsync(id);
+
+            var hasFlights = await _flightRepository.HasFlightsByUserAsync(id); 
+
+            if (hasFlights)
+            {
+                ModelState.AddModelError(string.Empty, "This user cannot be deleted because the user has created one or more flights.");
+                return View(user); 
+            }
+
+            var hasTickets = await _ticketRepository.HasTicketsByUserAsync(id);
+
+            if (hasTickets)
+            {
+                ModelState.AddModelError(string.Empty, "This user cannot be deleted because the user has one or more tickets bought.");
+                return View(user);
+            }
+
+
             if (user != null)
             {
                 var result = await _userHelper.DeleteUserAsync(user);
@@ -238,11 +263,6 @@ namespace FlightTicketManager.Controllers
         }
 
         public IActionResult UserNotFound()
-        {
-            return View();
-        }
-
-        public IActionResult IdNumberAlreadyExists()
         {
             return View();
         }

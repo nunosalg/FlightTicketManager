@@ -30,5 +30,11 @@ namespace FlightTicketManager.Data.Repositories
             Flight currentFlight = null);
 
         List<Flight> GetSameDayFlights(Aircraft selectedAircraft, DateTime selectedDate, Flight currentFlight = null);
+
+        Task<bool> HasFlightsWithAircraftAsync(int aircraftId);
+
+        Task<bool> HasFlightsWithCityAsync(int cityId);
+
+        Task<bool> HasFlightsByUserAsync(string userId);
     }
 }

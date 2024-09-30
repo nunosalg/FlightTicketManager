@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using FlightTicketManager.Models;
@@ -109,6 +108,8 @@ namespace FlightTicketManager.Controllers
                 AvailableSeats = flight.AvailableSeats, 
                 Buyer = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name),
             };
+            model.AvailableSeats.Sort();
+            model.SetTicketPrice();
 
             return View(model);
         }
@@ -142,7 +143,6 @@ namespace FlightTicketManager.Controllers
                 }
 
                 var ticket = await _converterHelper.ToTicketAsync(model, user, flight.Id);
-                ticket.SetTicketPrice();
 
                 flight.AvailableSeats.Remove(model.Seat);
                 flight.TicketsList.Add(ticket);
@@ -178,7 +178,7 @@ namespace FlightTicketManager.Controllers
                 return new NotFoundViewResult("UserNotFound");
             }
 
-            var tickets = _ticketRepository.GetTicketsByUser(user.Id);
+            var tickets = _ticketRepository.GetTicketsByUserEmail(user.Email);
 
             return View(tickets);
         }
@@ -196,6 +196,86 @@ namespace FlightTicketManager.Controllers
             return View(tickets);
         }
 
+        // GET: ChangeSeat
+        public async Task<IActionResult> ChangeSeat(int id)
+        {
+            var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(id);
+            if (ticket == null)
+            {
+                return new NotFoundViewResult("TicketNotFound");
+            }
+
+            var model = new ChangeSeatViewModel
+            {
+                TicketId = ticket.Id,
+                FlightId = ticket.Flight.Id,
+                AvailableSeats = ticket.Flight.AvailableSeats,
+                CurrentSeat = ticket.Seat
+            };
+            model.AvailableSeats.Sort();
+
+            return View(model);
+        }
+
+        // POST: ChangeSeat
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeSeat(ChangeSeatViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(model.FlightId);
+                if (ticket == null)
+                {
+                    return new NotFoundViewResult("TicketNotFound");
+                }
+
+                // Update seat logic
+                var flight = ticket.Flight;
+                flight.AvailableSeats.Remove(model.NewSeat);
+                flight.AvailableSeats.Add(ticket.Seat); // Re-add the old seat
+
+                ticket.Seat = model.NewSeat;
+                await _ticketRepository.UpdateAsync(ticket);
+                await _flightRepository.UpdateAsync(flight);
+
+                return RedirectToAction(nameof(MyFlights)); 
+            }
+
+            return View(model);
+        }
+
+        // GET: CancelTicket
+        public async Task<IActionResult> CancelTicket(int? id)
+        {
+            var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(id.Value);
+            if (ticket == null)
+            {
+                return new NotFoundViewResult("TicketNotFound");
+            }
+
+            return View(ticket);
+        }
+
+        // POST: CancelTicket
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelTicket(int id)
+        {
+            var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(id);
+            if (ticket == null)
+            {
+                return new NotFoundViewResult("TicketNotFound");
+            }
+
+            var flight = ticket.Flight;
+            flight.AvailableSeats.Add(ticket.Seat); 
+            await _flightRepository.UpdateAsync(flight);
+
+            await _ticketRepository.DeleteAsync(ticket);
+
+            return RedirectToAction(nameof(MyFlights)); 
+        }
 
         public IActionResult TicketNotFound()
         {

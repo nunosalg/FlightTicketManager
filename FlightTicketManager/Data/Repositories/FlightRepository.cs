@@ -1,10 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using FlightTicketManager.Data.Entities;
-using System.Collections.Generic;
-using System;
-using System.Security.Cryptography;
 
 namespace FlightTicketManager.Data.Repositories
 {
@@ -65,6 +64,7 @@ namespace FlightTicketManager.Data.Repositories
                 .Include(f => f.Aircraft)
                 .Include(f => f.Origin)
                 .Include(f => f.Destination)
+                .Include(f => f.TicketsList)
                 .FirstOrDefaultAsync(f => f.Id == id);
         }
 
@@ -116,7 +116,6 @@ namespace FlightTicketManager.Data.Repositories
                              (selectedDestination != v.Origin.Name && selectedDestination != v.Destination.Name)))
                 .ToList();
 
-            // If a current flight is being edited, exclude it from the conflict check
             if (currentFlight != null)
             {
                 conflictingFlights.RemoveAll(f => f.Id == currentFlight.Id);
@@ -135,13 +134,27 @@ namespace FlightTicketManager.Data.Repositories
                             v.DepartureDateTime.Date == selectedDate.Date)
                 .ToList();
 
-            // Exclude the current flight
             if (currentFlight != null)
             {
                 sameDayFlights.RemoveAll(f => f.Id == currentFlight.Id);
             }
 
             return sameDayFlights;
+        }
+
+        public async Task<bool> HasFlightsWithAircraftAsync(int aircraftId)
+        {
+            return await _context.Flights.AnyAsync(f => f.Aircraft.Id == aircraftId);
+        }
+
+        public async Task<bool> HasFlightsWithCityAsync(int cityId)
+        {
+            return await _context.Flights.AnyAsync(f => f.Origin.Id == cityId || f.Destination.Id == cityId);
+        }
+
+        public async Task<bool> HasFlightsByUserAsync(string userId)
+        {
+            return await _context.Flights.AnyAsync(f => f.User.Id == userId);
         }
     }
 }

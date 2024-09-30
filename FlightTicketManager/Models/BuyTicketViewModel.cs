@@ -21,18 +21,18 @@ namespace FlightTicketManager.Models
 
 
         [Required]
-        [Display(Name = "Passenger name")]
+        [Display(Name = "Passenger Name")]
         public string PassengerName { get; set; }
 
 
         [Required]
-        [Display(Name = "Passenger identification")]
+        [Display(Name = "Passenger Identification")]
         [StringLength(8)]
         public string PassengerId { get; set; }
 
 
         [Required]
-        [Display(Name = "Passenger birthdate")]
+        [Display(Name = "Passenger Birthdate")]
         public DateTime PassengerBirthDate { get; set; }
 
 
@@ -42,5 +42,21 @@ namespace FlightTicketManager.Models
         [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
         public decimal Price { get; set; }
 
+
+        public void SetTicketPrice()
+        {
+            this.Price = TicketPrice();
+        }
+
+        private decimal TicketPrice()
+        {
+            decimal costPerMinute = 0.5m;
+            decimal distanceInMinutes = (decimal)Flight.FlightDuration.TotalMinutes;
+            decimal ocupationCost = Flight.AvailableSeatsNumber * 0.1m;
+
+            decimal ticketPrice = costPerMinute * distanceInMinutes + ocupationCost;
+
+            return ticketPrice;
+        }
     }
 }

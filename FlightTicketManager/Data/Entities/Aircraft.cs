@@ -51,7 +51,7 @@ namespace FlightTicketManager.Data.Entities
         }
 
 
-        public string AircraftData => $"{Description} {Airline}";
+        public string Data => $"{Description} {Airline}";
 
 
         /// <summary>

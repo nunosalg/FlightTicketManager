@@ -3,6 +3,7 @@ using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace FlightTicketManager.Helpers
 {
@@ -15,7 +16,7 @@ namespace FlightTicketManager.Helpers
             _configuration = configuration;
         }
 
-        public Response SendEmail(string to, string subject, string body)
+        public async Task<Response> SendEmailAsync(string to, string subject, string body)
         {
             var nameFrom = _configuration["Mail:NameFrom"];
             var from = _configuration["Mail:From"];
@@ -38,14 +39,12 @@ namespace FlightTicketManager.Helpers
             {
                 using (var client = new SmtpClient())
                 {
-                    client. ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+                    client.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
 
-                    client.Connect(smtp, int.Parse(port), SecureSocketOptions.StartTls);
-
-                    client.Authenticate(from, password);
-
-                    client.Send(message);
-                    client.Disconnect(true);
+                    await client.ConnectAsync(smtp, int.Parse(port), SecureSocketOptions.StartTls);
+                    await client.AuthenticateAsync(from, password);
+                    await client.SendAsync(message);
+                    await client.DisconnectAsync(true);
                 }
             }
             catch (Exception ex)
@@ -61,6 +60,30 @@ namespace FlightTicketManager.Helpers
             {
                 IsSuccess = true,
             };
+        }
+
+        public async Task SendCancellationEmailAsync(string userEmail, string flightNumber, decimal ticketPrice)
+        {
+            try
+            {
+                var subject = "Flight Cancellation Notification";
+                var message = $"Dear User,</br></br>" +
+                              $"We regret to inform you that your flight with number {flightNumber} has been canceled.</br>" +
+                              $"The ticket price of {ticketPrice:C} will be refunded to your account.</br></br>" +
+                              "Thank you for your understanding.";
+
+                var response = await SendEmailAsync(userEmail, subject, message);
+                if (!response.IsSuccess)
+                {
+                    // Log error if email failed to send
+                    Console.WriteLine($"Error sending email to {userEmail}: {response.Message}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"Error sending cancellation email: {ex.Message}");
+            }
         }
     }
 }

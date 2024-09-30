@@ -69,7 +69,6 @@ namespace FlightTicketManager.Helpers
 
             if (existingFlight != null)
             {
-                // Update properties of the existing flight
                 existingFlight.DepartureDateTime = model.DepartureDateTime;
                 existingFlight.FlightDuration = model.FlightDuration;
                 existingFlight.Origin = origin;
@@ -83,7 +82,6 @@ namespace FlightTicketManager.Helpers
             }
             else
             {
-                // Creates a new flight
                 return new Flight
                 {
                     Id = model.Id,

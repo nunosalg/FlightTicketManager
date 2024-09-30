@@ -98,7 +98,7 @@
                                 <img src="@Url.Content(flight.Destination.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
                             }
                         </td>
-                        <td>@flight.Aircraft.AircraftData</td>
+                        <td>@flight.Aircraft.Data</td>
                         <td>@flight.AvailableSeatsNumber</td>
                         <td>
                             @if (!this.User.IsInRole("Employee"))

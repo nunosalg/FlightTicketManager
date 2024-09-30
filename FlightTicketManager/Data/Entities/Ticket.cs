@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FlightTicketManager.Data.Entities
@@ -18,17 +17,17 @@ namespace FlightTicketManager.Data.Entities
 
 
         [Required]
-        [Display(Name ="Ticket buyer")]
+        [Display(Name ="Ticket Buyer")]
         public User TicketBuyer { get; set; }
 
 
         [Required]
-        [Display(Name = "Passenger name")]
+        [Display(Name = "Passenger Name")]
         public string PassengerName { get; set; }
 
 
         [Required]
-        [Display(Name = "Passenger identification")]
+        [Display(Name = "Passenger Identification")]
         public string PassengerId { get; set; }
 
 
@@ -39,25 +38,5 @@ namespace FlightTicketManager.Data.Entities
 
         [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
         public decimal Price { get; set; }
-
-
-        public void SetTicketPrice()
-        {
-            this.Price = TicketPrice();
-        }
-
-
-        private decimal TicketPrice()
-        {
-            decimal costPerMinute = 0.5m;
-            decimal distanceInMinutes = (decimal)Flight.FlightDuration.TotalMinutes;
-            decimal ocupationCost = Flight.AvailableSeatsNumber * 0.1m;
-
-            decimal ticketPrice = costPerMinute * distanceInMinutes + ocupationCost;
-
-            return ticketPrice;
-        }
-
-        
     }
 }

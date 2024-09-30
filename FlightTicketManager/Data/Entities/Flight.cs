@@ -51,6 +51,10 @@ namespace FlightTicketManager.Data.Entities
         public List<Ticket> TicketsList { get; set; } = new List<Ticket>();
 
 
+        [Display(Name = "Tickets sold")]
+        public int TicketsSold => TicketsList.Count;
+
+
         [Required]
         public User User { get; set; }
 

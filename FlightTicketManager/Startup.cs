@@ -1,3 +1,6 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -5,13 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Syncfusion.Licensing;
 using FlightTicketManager.Data;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
-using Syncfusion.Licensing;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.Authentication;
 using FlightTicketManager.Data.Repositories;
 
 namespace FlightTicketManager
@@ -65,6 +65,7 @@ namespace FlightTicketManager
                 });
 
             services.AddTransient<SeedDb>();
+
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<IImageHelper, ImageHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
@@ -74,7 +75,6 @@ namespace FlightTicketManager
             services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<IFlightRepository, FlightRepository>();
             services.AddScoped<ITicketRepository, TicketRepository>();
-
 
             services.ConfigureApplicationCookie(options =>
             {
@@ -88,8 +88,6 @@ namespace FlightTicketManager
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-           
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

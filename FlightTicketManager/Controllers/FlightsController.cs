@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,7 +9,6 @@ using FlightTicketManager.Data.Repositories;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
 using FlightTicketManager.Data.Entities;
-using System;
 
 namespace FlightTicketManager.Controllers
 {
@@ -19,20 +19,26 @@ namespace FlightTicketManager.Controllers
         private readonly IUserHelper _userHelper;
         private readonly ICityRepository _cityRepository;
         private readonly IAircraftRepository _aircraftRepository;
+        private readonly ITicketRepository _ticketRepository;
         private readonly IConverterHelper _converterHelper;
+        private readonly IMailHelper _mailHelper;
 
         public FlightsController(
             IFlightRepository flightRepository,
-            IUserHelper userHelper,
             ICityRepository cityRepository,
             IAircraftRepository aircraftRepository,
-            IConverterHelper converterHelper)
+            ITicketRepository ticketRepository,
+            IUserHelper userHelper,
+            IConverterHelper converterHelper,
+            IMailHelper mailHelper)
         {
             _flightRepository = flightRepository;
             _userHelper = userHelper;
             _cityRepository = cityRepository;
             _aircraftRepository = aircraftRepository;
+            _ticketRepository = ticketRepository;
             _converterHelper = converterHelper;
+            _mailHelper = mailHelper;
         }
 
         // GET: Flights
@@ -72,7 +78,7 @@ namespace FlightTicketManager.Controllers
                 Aircrafts = _aircraftRepository.GetAllActive().Select(aircraft => new SelectListItem
                 {
                     Value = aircraft.Id.ToString(),
-                    Text = aircraft.AircraftData, 
+                    Text = aircraft.Data, 
                 })
             };
             return View(model);
@@ -163,7 +169,7 @@ namespace FlightTicketManager.Controllers
             model.Aircrafts = _aircraftRepository.GetAllActive().Select(aircraft => new SelectListItem
             {
                 Value = aircraft.Id.ToString(),
-                Text = aircraft.AircraftData,
+                Text = aircraft.Data,
                 Selected = aircraft.Id == flight.Aircraft.Id
             }).ToList();
 
@@ -256,9 +262,24 @@ namespace FlightTicketManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var flight = await _flightRepository.GetByIdAsync(id);
-            await _flightRepository.DeleteAsync(flight);
+            var flight = await _flightRepository.GetByIdWithTrackingAsync(id);
+            if (flight == null)
+            {
+                return new NotFoundViewResult("FlightNotFound");
+            }
 
+            var tickets = await _ticketRepository.GetTicketsByFlightIdAsync(id);
+
+            if (tickets != null && tickets.Any())
+            {
+                // Notify users about ticket cancellation and refund
+                foreach (var ticket in tickets)
+                {
+                    await _mailHelper.SendCancellationEmailAsync(ticket.TicketBuyer.Email, flight.FlightNumber, ticket.Price);
+                }
+            }
+
+            await _flightRepository.DeleteAsync(flight);
             return RedirectToAction(nameof(Index));
         }
 

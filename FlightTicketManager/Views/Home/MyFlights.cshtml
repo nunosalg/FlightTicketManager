@@ -26,6 +26,7 @@ else
                 <th>Passenger ID</th>
                 <th>Passenger Birthdate</th>
                 <th>Ticket Price</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -37,12 +38,16 @@ else
                     <td>@ticket.Flight.Destination.Name</td>
                     <td>@ticket.Flight.DepartureDateTime.ToString("dd/MM/yyyy HH:mm")</td>
                     <td>@ticket.Flight.FlightDuration</td>
-                    <td>@ticket.Flight.Aircraft.AircraftData</td>
+                    <td>@ticket.Flight.Aircraft.Data</td>
                     <td>@ticket.Seat</td>
                     <td>@ticket.PassengerName</td>
                     <td>@ticket.PassengerId</td>
                     <td>@ticket.PassengerBirthDate.ToString("dd/MM/yyyy")</td>
                     <td>@String.Format("{0:C}", ticket.Price)</td>
+                    <td>
+                        <a asp-action="ChangeSeat" asp-route-id="@ticket.Id">Change Seat</a>
+                        <a asp-action="CancelTicket" asp-route-id="@ticket.Id">Cancel Ticket</a>
+                    </td>
                 </tr>
             }
         </tbody>

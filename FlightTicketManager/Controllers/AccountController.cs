@@ -109,7 +109,7 @@ namespace FlightTicketManager.Controllers
                         token = myToken
                     }, protocol: HttpContext.Request.Scheme);
 
-                    Response response = _mailHelper.SendEmail(model.Username, "Email confirmation", $"<h1>Email Confirmation</h1>" +
+                    Response response = await _mailHelper.SendEmailAsync(model.Username, "Email confirmation", $"<h1>Email Confirmation</h1>" +
                         $"To allow the user, " +
                         $"plase click in this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
 
@@ -344,7 +344,7 @@ namespace FlightTicketManager.Controllers
                     "Account",
                     new { token = myToken }, protocol: HttpContext.Request.Scheme);
 
-                Response response = _mailHelper.SendEmail(model.Email, "Flight Ticket Manager Password Reset", $"<h1>FWS Password Reset</h1>" +
+                Response response = await _mailHelper.SendEmailAsync(model.Email, "Flight Ticket Manager Password Reset", $"<h1>FWS Password Reset</h1>" +
                 $"To reset the password click in this link:</br></br>" +
                 $"<a href = \"{link}\">Reset Password</a>");
 

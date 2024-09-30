@@ -13,17 +13,20 @@ namespace FlightTicketManager.Controllers
     public class AircraftsController : Controller
     {
         private readonly IAircraftRepository _aircraftRepository;
+        private readonly IFlightRepository _flightRepository;
         private readonly IUserHelper _userHelper;
         private readonly IImageHelper _imageHelper;
         private readonly IConverterHelper _converterHelper;
 
         public AircraftsController(
             IAircraftRepository aircraftRepository,
+            IFlightRepository flightRepository,
             IUserHelper userHelper,
             IImageHelper imageHelper,
             IConverterHelper converterHelper)
         {
             _aircraftRepository = aircraftRepository;
+            _flightRepository = flightRepository;
             _userHelper = userHelper;
             _imageHelper = imageHelper;
             _converterHelper = converterHelper;
@@ -166,8 +169,16 @@ namespace FlightTicketManager.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var aircraft = await _aircraftRepository.GetByIdAsync(id);
-            await _aircraftRepository.DeleteAsync(aircraft);
 
+            var hasFlights = await _flightRepository.HasFlightsWithAircraftAsync(id); 
+
+            if (hasFlights)
+            {
+                ModelState.AddModelError(string.Empty, "This aircraft cannot be deleted because it is associated with one or more flights.");
+                return View(aircraft); 
+            }
+
+            await _aircraftRepository.DeleteAsync(aircraft);
             return RedirectToAction(nameof(Index));
         }
 

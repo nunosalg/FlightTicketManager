@@ -13,10 +13,12 @@ namespace FlightTicketManager.Controllers
     public class CitiesController : Controller
     {
         private readonly ICityRepository _cityRepository;
+        private readonly IFlightRepository _flightRepository;
 
-        public CitiesController(ICityRepository cityRepository)
+        public CitiesController(ICityRepository cityRepository, IFlightRepository flightRepository)
         {
             _cityRepository = cityRepository;
+            _flightRepository = flightRepository;
         }
 
         // GET: Cities
@@ -142,17 +144,20 @@ namespace FlightTicketManager.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var city = await _cityRepository.GetByIdAsync(id);
-            await _cityRepository.DeleteAsync(city);
 
+            var hasFlights = await _flightRepository.HasFlightsWithCityAsync(id); 
+
+            if (hasFlights)
+            {
+                ModelState.AddModelError(string.Empty, "This city cannot be deleted because it is associated with one or more flights.");
+                return View(city); 
+            }
+
+            await _cityRepository.DeleteAsync(city);
             return RedirectToAction(nameof(Index));
         }
 
         public IActionResult CityNotFound()
-        {
-            return View();
-        }
-
-        public IActionResult CityAlreadyExists()
         {
             return View();
         }

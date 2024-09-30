@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FlightTicketManager.Data.Entities;
 
@@ -10,8 +11,12 @@ namespace FlightTicketManager.Data.Repositories
 
         Task<bool> PassengerAlreadyHasTicketInFlight(int flightId, string passengerId);
 
-        IQueryable GetTicketsByUser(string userId);
+        IQueryable<Ticket> GetTicketsByUserEmail(string userEmail);
 
         IQueryable GetTicketsHistoryByUser(string userId);
+
+        Task<bool> HasTicketsByUserAsync(string userId);
+
+        Task<List<Ticket>> GetTicketsByFlightIdAsync(int flightId);
     }
 }

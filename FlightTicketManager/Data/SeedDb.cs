@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Data.Repositories;
-using FlightTicketManager.Migrations;
 
 namespace FlightTicketManager.Data
 {
@@ -137,7 +136,6 @@ namespace FlightTicketManager.Data
                 PassengerBirthDate = passengerBirthdate,
             };
 
-            ticket.SetTicketPrice();
             flight.AvailableSeats.Remove(seat);
             flight.TicketsList.Add(ticket);
 
