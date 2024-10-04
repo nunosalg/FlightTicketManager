@@ -54,6 +54,9 @@ namespace FlightTicketManager.Data.Entities
         public string Data => $"{Description} {Airline}";
 
 
+        public string ModelId => $"{Description} {Airline} {Id}";
+
+
         /// <summary>
         /// Generates the seats of the aircraft based on its capacity.
         /// </summary>

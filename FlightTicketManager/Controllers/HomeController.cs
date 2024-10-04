@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using FlightTicketManager.Models;
 using FlightTicketManager.Data.Repositories;
 using FlightTicketManager.Helpers;
+using FlightTicketManager.Services;
 
 namespace FlightTicketManager.Controllers
 {
@@ -16,23 +17,29 @@ namespace FlightTicketManager.Controllers
         private readonly ICityRepository _cityRepository;
         private readonly IFlightRepository _flightRepository;
         private readonly ITicketRepository _ticketRepository;
+        private readonly ITicketHistoryRepository _ticketHistoryRepository;
         private readonly IUserHelper _userHelper;
         private readonly IConverterHelper _converterHelper;
+        private readonly IHistoryService _historyService;
 
         public HomeController(
             ILogger<HomeController> logger,
             ICityRepository cityRepository,
             IFlightRepository flightRepository,
             ITicketRepository ticketRepository,
+            ITicketHistoryRepository ticketHistoryRepository,
             IUserHelper userHelper,
-            IConverterHelper converterHelper)
+            IConverterHelper converterHelper,
+            IHistoryService historyService)
         {
             _logger = logger;
             _cityRepository = cityRepository;
             _flightRepository = flightRepository;
             _ticketRepository = ticketRepository;
+            _ticketHistoryRepository = ticketHistoryRepository;
             _userHelper = userHelper;
             _converterHelper = converterHelper;
+            _historyService = historyService;
         }
 
         // GET: Home/Index
@@ -137,7 +144,7 @@ namespace FlightTicketManager.Controllers
                     model.PassengerBirthDate = model.PassengerBirthDate;
                     model.AvailableSeats = flight.AvailableSeats;
 
-                    ModelState.AddModelError(string.Empty, "You already have a ticket for this flight.");
+                    ModelState.AddModelError(string.Empty, $"The passenger with ID {model.PassengerId} already has a ticket for this flight.");
 
                     return View(model);
                 }
@@ -191,7 +198,7 @@ namespace FlightTicketManager.Controllers
                 return new NotFoundViewResult("UserNotFound");
             }
 
-            var tickets = _ticketRepository.GetTicketsHistoryByUser(user.Id);
+            var tickets = _ticketHistoryRepository.GetByUserId(user.Email).ToList();
 
             return View(tickets);
         }
@@ -269,9 +276,13 @@ namespace FlightTicketManager.Controllers
             }
 
             var flight = ticket.Flight;
-            flight.AvailableSeats.Add(ticket.Seat); 
-            await _flightRepository.UpdateAsync(flight);
+            flight.AvailableSeats.Add(ticket.Seat);
 
+            // Save the ticket history before updating the flight
+            await _historyService.SaveTicketHistoryAsync(ticket, "Cancelled");
+
+            // Update the flight and delete the ticket
+            await _flightRepository.UpdateAsync(flight);
             await _ticketRepository.DeleteAsync(ticket);
 
             return RedirectToAction(nameof(MyFlights)); 

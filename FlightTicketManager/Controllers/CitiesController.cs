@@ -99,6 +99,14 @@ namespace FlightTicketManager.Controllers
         {
             if (ModelState.IsValid)
             {
+                var hasFlights = await _flightRepository.HasFlightsWithCityAsync(city.Id);
+
+                if (hasFlights)
+                {
+                    ModelState.AddModelError(string.Empty, "This city cannot be edited because it is associated with one or more flights.");
+                    return View(city);
+                }
+
                 try
                 {
                     city.CountryCode = city.CountryCode.ToUpper();

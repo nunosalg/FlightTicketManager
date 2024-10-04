@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -52,6 +52,6 @@ namespace FlightTicketManager.Helpers
 
         Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
 
-        Task<User> GetUserByIdNumberAsync(string idNumber);
+        Task<IQueryable<User>> GetAllUsersExceptAdminsAsync();
     }
 }

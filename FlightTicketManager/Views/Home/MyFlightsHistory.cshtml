@@ -1,4 +1,4 @@
-﻿@model IQueryable<FlightTicketManager.Data.Entities.Ticket>
+﻿@model IEnumerable<FlightTicketManager.Data.Entities.TicketHistory>
 
 @{
     ViewData["Title"] = "My Flights";
@@ -15,34 +15,66 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Flight Number</th>
-                <th>Origin</th>
-                <th>Destination</th>
-                <th>Departure Date</th>
-                <th>Duration</th>
-                <th>Aircraft</th>
-                <th>Seat</th>
-                <th>Passenger Name</th>
-                <th>Passenger ID</th>
-                <th>Passenger Birthdate</th>
-                <th>Ticket Price</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FlightNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DepartureDateTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Origin)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Destination)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Seat)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PassengerId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PassengerName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var ticket in Model)
+            @foreach (var item in Model)
             {
                 <tr>
-                    <td>@ticket.Flight.FlightNumber</td>
-                    <td>@ticket.Flight.Origin.Name</td>
-                    <td>@ticket.Flight.Destination.Name</td>
-                    <td>@ticket.Flight.DepartureDateTime.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@ticket.Flight.FlightDuration</td>
-                    <td>@ticket.Flight.Aircraft.Data</td>
-                    <td>@ticket.Seat</td>
-                    <td>@ticket.PassengerName</td>
-                    <td>@ticket.PassengerId</td>
-                    <td>@ticket.PassengerBirthDate.ToString("dd/MM/yyyy")</td>
-                    <td>@String.Format("{0:C}", ticket.Price)</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FlightNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DepartureDateTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Origin)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Destination)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Seat)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PassengerId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PassengerName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
                 </tr>
             }
         </tbody>

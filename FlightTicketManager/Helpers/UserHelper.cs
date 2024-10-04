@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Models;
 using FlightTicketManager.Data;
@@ -148,10 +147,14 @@ namespace FlightTicketManager.Helpers
             return await _userManager.ResetPasswordAsync(user, token, password);
         }
 
-        public async Task<User> GetUserByIdNumberAsync(string idNumber)
+        public async Task<IQueryable<User>> GetAllUsersExceptAdminsAsync()
         {
-            return await _context.Users
-                .FirstOrDefaultAsync(u => u.IdNumber == idNumber);
+            var adminUsers = await _userManager.GetUsersInRoleAsync("Admin");
+
+            var allUsersExceptAdmins = _userManager.Users
+                .Where(user => !adminUsers.Contains(user));
+
+            return allUsersExceptAdmins;
         }
     }
 }

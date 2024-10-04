@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using FlightTicketManager.Data.Entities;
-using System.Collections.Generic;
 
 namespace FlightTicketManager.Data.Repositories
 {
@@ -38,8 +38,6 @@ namespace FlightTicketManager.Data.Repositories
                 .Include(t => t.Flight)
                 .ThenInclude(f => f.Aircraft) 
                 .Where(t => t.TicketBuyer.Email == userEmail && t.Flight.DepartureDateTime > DateTime.Now);
-
-
         }
 
         public IQueryable GetTicketsHistoryByUser(string userId)

@@ -19,6 +19,10 @@ namespace FlightTicketManager.Data
 
         public DbSet<Ticket> Tickets { get; set; }
 
+        public DbSet<FlightHistory> FlightsHistory { get; set; }
+
+        public DbSet<TicketHistory> TicketsHistory { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
             
@@ -33,10 +37,6 @@ namespace FlightTicketManager.Data
 
             modelBuilder.Entity<City>()
                 .HasIndex(c => c.Name)
-                .IsUnique();
-
-            modelBuilder.Entity<User>()
-                .HasIndex(u => u.IdNumber)
                 .IsUnique();
 
             modelBuilder.Entity<Aircraft>()
@@ -61,6 +61,10 @@ namespace FlightTicketManager.Data
                 .IsRequired();
 
             modelBuilder.Entity<Ticket>()
+                .Property(t => t.Price)
+                .HasColumnType("decimal(18, 2)");
+
+            modelBuilder.Entity<TicketHistory>()
                 .Property(t => t.Price)
                 .HasColumnType("decimal(18, 2)");
 

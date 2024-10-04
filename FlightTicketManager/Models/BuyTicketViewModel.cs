@@ -52,7 +52,7 @@ namespace FlightTicketManager.Models
         {
             decimal costPerMinute = 0.5m;
             decimal distanceInMinutes = (decimal)Flight.FlightDuration.TotalMinutes;
-            decimal ocupationCost = Flight.AvailableSeatsNumber * 0.1m;
+            decimal ocupationCost = Flight.TicketsSold * 0.1m;
 
             decimal ticketPrice = costPerMinute * distanceInMinutes + ocupationCost;
 

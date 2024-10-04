@@ -35,7 +35,7 @@ namespace FlightTicketManager.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            var users = _userHelper.GetAllUsers();
+            var users = await _userHelper.GetAllUsersExceptAdminsAsync();
             var userList = new List<UserRoleViewModel>();
 
             foreach (var user in users)
@@ -80,12 +80,6 @@ namespace FlightTicketManager.Controllers
                 var user = await _userHelper.GetUserByEmailAsync(model.Username);
                 if (user == null)
                 {
-                    var existingUser = await _userHelper.GetUserByIdNumberAsync(model.IdNumber);
-                    if (existingUser != null)
-                    {
-                        return new NotFoundViewResult("IdNumberAlreadyExists");
-                    }
-
                     user = new User
                     {
                         FirstName = model.FirstName,
@@ -93,7 +87,6 @@ namespace FlightTicketManager.Controllers
                         Email = model.Username,
                         UserName = model.Username,
                         BirthDate = model.BirthDate,
-                        IdNumber = model.IdNumber,
                     };
 
                     string password = new Random().ToString();
@@ -119,14 +112,13 @@ namespace FlightTicketManager.Controllers
 
                         if (response.IsSuccess)
                         {
-                            ViewBag.Message = "The instructions to allow you user have been sent to email";
-
                             return RedirectToAction(nameof(Index));
                         }
                     }
                 }
 
                 ModelState.AddModelError("", "Failed to create user.");
+                ModelState.AddModelError(model.Username, "Email already exists in database.");
             }
 
             return View(model);
@@ -151,6 +143,7 @@ namespace FlightTicketManager.Controllers
 
             var model = new AdminEditUserViewModel
             {
+                Id = id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Username = user.UserName,
@@ -174,7 +167,7 @@ namespace FlightTicketManager.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userHelper.GetUserByEmailAsync(model.Username);
+                var user = await _userHelper.GetUserByIdAsync(model.Id);
                 if (user == null)
                 {
                     return new NotFoundViewResult("UserNotFound");
@@ -183,6 +176,7 @@ namespace FlightTicketManager.Controllers
                 user.UserName = model.Username;
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
+                user.Email = model.Username;
 
                 var result = await _userHelper.UpdateUserAsync(user);
                 if (!result.Succeeded)

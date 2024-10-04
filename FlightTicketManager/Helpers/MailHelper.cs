@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
 
 namespace FlightTicketManager.Helpers
 {

@@ -13,6 +13,7 @@ using FlightTicketManager.Data;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Data.Repositories;
+using FlightTicketManager.Services;
 
 namespace FlightTicketManager
 {
@@ -66,15 +67,24 @@ namespace FlightTicketManager
 
             services.AddTransient<SeedDb>();
 
+            // Helpers
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<IImageHelper, ImageHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddScoped<IMailHelper, MailHelper>();
 
+            // Repositories
             services.AddScoped<IAircraftRepository, AircraftRepository>();
             services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<IFlightRepository, FlightRepository>();
             services.AddScoped<ITicketRepository, TicketRepository>();
+            services.AddScoped<IFlightHistoryRepository, FlightHistoryRepository>();
+            services.AddScoped<ITicketHistoryRepository, TicketHistoryRepository>();
+
+            // Services
+            services.AddScoped<IHistoryService, HistoryService>();
+            services.AddSingleton<IFlightServiceFactory, FlightServiceFactory>();
+            services.AddHostedService<FlightDepartureService>();
 
             services.ConfigureApplicationCookie(options =>
             {

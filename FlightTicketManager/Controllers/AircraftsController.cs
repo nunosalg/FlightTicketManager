@@ -115,6 +115,14 @@ namespace FlightTicketManager.Controllers
         {
             if (ModelState.IsValid)
             {
+                var hasFlights = await _flightRepository.HasFlightsWithAircraftAsync(model.Id);
+
+                if (hasFlights)
+                {
+                    ModelState.AddModelError(string.Empty, "This aircraft cannot be edited because it is associated with one or more flights.");
+                    return View(model);
+                }
+
                 try
                 {
                     var path = model.ImageUrl;

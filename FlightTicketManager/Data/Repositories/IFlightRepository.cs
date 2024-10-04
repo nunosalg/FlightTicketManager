@@ -36,5 +36,7 @@ namespace FlightTicketManager.Data.Repositories
         Task<bool> HasFlightsWithCityAsync(int cityId);
 
         Task<bool> HasFlightsByUserAsync(string userId);
+
+        Task<IEnumerable<Flight>> GetFlightsReadyForHistoryAsync();
     }
 }

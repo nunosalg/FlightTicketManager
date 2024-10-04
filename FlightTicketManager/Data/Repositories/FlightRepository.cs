@@ -156,5 +156,12 @@ namespace FlightTicketManager.Data.Repositories
         {
             return await _context.Flights.AnyAsync(f => f.User.Id == userId);
         }
+
+        public async Task<IEnumerable<Flight>> GetFlightsReadyForHistoryAsync()
+        {
+            return await _context.Flights
+                .Where(flight => flight.DepartureDateTime <= DateTime.Now)
+                .ToListAsync();
+        }
     }
 }

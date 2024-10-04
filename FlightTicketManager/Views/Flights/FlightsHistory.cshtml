@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FlightTicketManager.Data.Entities.Flight>
+﻿@model IEnumerable<FlightTicketManager.Data.Entities.FlightHistory>
 
 @{
     ViewData["Title"] = "Index";
@@ -16,16 +16,13 @@
                 @Html.DisplayNameFor(model => model.FlightNumber)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Aircraft)
+                @Html.DisplayNameFor(model => model.AircraftModelId)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.DepartureDateTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FlightDuration)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ArrivalTime)
+                @Html.DisplayNameFor(model => model.Duration)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Origin)
@@ -34,7 +31,7 @@
                 @Html.DisplayNameFor(model => model.Destination)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AvailableSeatsNumber)
+                @Html.DisplayNameFor(model => model.Status)
             </th>
         </tr>
     </thead>
@@ -46,33 +43,22 @@
                     @Html.DisplayFor(modelItem => item.FlightNumber)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Aircraft.Id)
+                    @Html.DisplayFor(modelItem => item.AircraftModelId)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DepartureDateTime)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FlightDuration)
+                    @Html.DisplayFor(modelItem => item.Duration)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ArrivalTime)
+                    @Html.DisplayFor(modelItem => item.Origin)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Origin.Name) <br />
-                    @if (!string.IsNullOrEmpty(item.Origin.FlagUrl))
-                    {
-                        <img src="@Url.Content(item.Origin.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
-                    }
+                    @Html.DisplayFor(modelItem => item.Destination)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Destination.Name) <br />
-                    @if (!string.IsNullOrEmpty(item.Destination.FlagUrl))
-                    {
-                        <img src="@Url.Content(item.Destination.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
-                    }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AvailableSeatsNumber)
+                    @Html.DisplayFor(modelItem => item.Status)
                 </td>
             </tr>
         }
