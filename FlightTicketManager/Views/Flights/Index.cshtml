@@ -5,91 +5,102 @@
 }
 
 <h1>Flights list</h1>
-
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> Add Flight
+    </a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FlightNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Aircraft)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DepartureDateTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FlightDuration)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ArrivalTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Origin)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Destination)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AvailableSeatsNumber)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.Fullname)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FlightNumber)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Aircraft.Data)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DepartureDateTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FlightDuration)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ArrivalTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Origin.Name) <br />
-                    @if (!string.IsNullOrEmpty(item.Origin.FlagUrl))
-                    {
-                        <img src="@Url.Content(item.Origin.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
-                    }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Destination.Name) <br />
-                    @if (!string.IsNullOrEmpty(item.Destination.FlagUrl))
-                    {
-                        <img src="@Url.Content(item.Destination.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
-                    }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AvailableSeatsNumber)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="card-container" style="justify-content: flex-start;">
+    <div class="card">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.User)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FlightNumber)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Aircraft)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DepartureDateTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FlightDuration)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ArrivalTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Origin)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Destination)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.AvailableSeatsNumber)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center align-middle">
+                            @Html.DisplayFor(modelItem => item.User.Fullname)
+                        </td>
+                        <td class="text-center align-middle">
+                            @Html.DisplayFor(modelItem => item.FlightNumber)
+                        </td>
+                        <td class="text-center align-middle">
+                            @Html.DisplayFor(modelItem => item.Aircraft.Data)
+                        </td>
+                        <td class="text-center align-middle">
+                            @Html.DisplayFor(modelItem => item.DepartureDateTime)
+                        </td>
+                        <td class="text-center align-middle">
+                            @Html.DisplayFor(modelItem => item.FlightDuration)
+                        </td>
+                        <td class="text-center align-middle">
+                            @Html.DisplayFor(modelItem => item.ArrivalTime)
+                        </td>
+                        <td class="text-center align-middle">
+                            @Html.DisplayFor(modelItem => item.Origin.Name) <br />
+                            @if (!string.IsNullOrEmpty(item.Origin.FlagUrl))
+                            {
+                                <img src="@Url.Content(item.Origin.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
+                            }
+                        </td>
+                        <td class="text-center align-middle">
+                            @Html.DisplayFor(modelItem => item.Destination.Name) <br />
+                            @if (!string.IsNullOrEmpty(item.Destination.FlagUrl))
+                            {
+                                <img src="@Url.Content(item.Destination.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
+                            }
+                        </td>
+                        <td class="text-center align-middle">
+                            @Html.DisplayFor(modelItem => item.AvailableSeatsNumber)
+                        </td>
+                        <td class ="text-center align-middle">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-edit" style="width: auto">
+                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info" style="width: auto">
+                                <i class="fa-solid fa-list"></i> Details
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger" style="width: auto">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 @section Scripts {
     @{

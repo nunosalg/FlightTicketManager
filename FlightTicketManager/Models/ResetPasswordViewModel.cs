@@ -13,12 +13,13 @@ namespace FlightTicketManager.Models
 
 
         [Required]
-        [Display(Name = "New password")]
+        [Display(Name = "New Password")]
         public string NewPassword { get; set; }
 
 
         [Required]
         [Compare("NewPassword")]
+        [Display(Name = "Confirm Password")]
         public string Confirm { get; set; }
     }
 }

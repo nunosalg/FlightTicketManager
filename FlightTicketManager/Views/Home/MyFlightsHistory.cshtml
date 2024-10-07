@@ -1,82 +1,86 @@
 ﻿@model IEnumerable<FlightTicketManager.Data.Entities.TicketHistory>
 
 @{
-    ViewData["Title"] = "My Flights";
+    ViewData["Title"] = "Tickets History";
 }
-
-<h1>My Flights</h1>
+<h1 class="text-center">@ViewData["Title"]</h1>
 
 @if (!Model.Any())
 {
-    <p>No flights found.</p>
+    <h2 class="text-center">You haven't flied with us yet :(</h2>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.FlightNumber)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.DepartureDateTime)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Origin)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Destination)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Seat)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.PassengerId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.PassengerName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Price)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Status)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FlightNumber)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DepartureDateTime)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Origin)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Destination)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Seat)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PassengerId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PassengerName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Price)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Status)
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="card-container">
+        <div class="card">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FlightNumber)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.DepartureDateTime)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Origin)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Destination)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Seat)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PassengerId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PassengerName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Price)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Status)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FlightNumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DepartureDateTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Origin)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Destination)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Seat)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PassengerId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PassengerName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Price)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Status)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 }

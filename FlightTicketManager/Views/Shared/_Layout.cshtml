@@ -9,15 +9,20 @@
     <title>@ViewData["Title"] - FlightTicketManager</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" />
+    <!-- Syncfusion CSS -->
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/26.2.11/fluent.css" />
+    <!-- Syncfusion JS -->
     <script src="https://cdn.syncfusion.com/ej2/26.2.11/dist/ej2.min.js"></script>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Fly With Salgueiro</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/fws_logomini.png" alt="Fly With Salgueiro" style="height: 50px;width: 90px" />
+                </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -25,50 +30,44 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AvailableFlights">Available Flights</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="AvailableFlights"><i class="fa-solid fa-plane-up"></i> Available Flights</a>
                         </li>
                         @if (this.User.Identity.IsAuthenticated && this.User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Aircrafts" asp-action="Index">Aircrafts</a>
+                                <a class="nav-link" asp-area="" asp-controller="Aircrafts" asp-action="Index"><i class="fa-solid fa-plane"></i> Aircrafts</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Cities" asp-action="Index">Cities</a>
+                                <a class="nav-link" asp-area="" asp-controller="Cities" asp-action="Index"><i class="fa-solid fa-location-dot"></i> Cities</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
-                            </li>
-                        }
-                        @if (this.User.Identity.IsAuthenticated && (this.User.IsInRole("Customer") || this.User.IsInRole("Admin")))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="MyFlights">My Flights</a>
+                                <a class="nav-link" asp-area="" asp-controller="Users" asp-action="Index"><i class="fa-solid fa-users"></i> Users</a>
                             </li>
                         }
-                        @if (this.User.Identity.IsAuthenticated && (this.User.IsInRole("Customer") || this.User.IsInRole("Admin")))
+                        @if (this.User.Identity.IsAuthenticated && (this.User.IsInRole("Customer")))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="MyFlightsHistory">History</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="MyFlights"><i class="fa-solid fa-plane-departure"></i> My Flights</a>
+                            </li>
+                        }
+                        @if (this.User.Identity.IsAuthenticated && (this.User.IsInRole("Customer")))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="MyFlightsHistory"><i class="fa-solid fa-plane-arrival"></i> History</a>
                             </li>
                         }
                         @if (this.User.Identity.IsAuthenticated && this.User.IsInRole("Employee"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Flights" asp-action="Index">Flights</a>
+                                <a class="nav-link" asp-area="" asp-controller="Flights" asp-action="Index"><i class="fa-solid fa-plane-departure"></i> Flights</a>
                             </li>
                         }
                         @if (this.User.Identity.IsAuthenticated && this.User.IsInRole("Employee"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Flights" asp-action="FlightsHistory">History</a>
+                                <a class="nav-link" asp-area="" asp-controller="Flights" asp-action="FlightsHistory"><i class="fa-solid fa-plane-arrival"></i> History</a>
                             </li>
                         }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
                     </ul>
                     <ul class="navbar-nav ml-auto d-flex align-items-center">
                         @if (this.User.Identity.IsAuthenticated)
@@ -76,19 +75,19 @@
                             var currentUser = UserHelper.GetCurrentUserAsync(User).Result;
 
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="ChangeUser">@this.User.Identity.Name</a>
+                                <a class="nav-link small" asp-area="" asp-controller="Account" asp-action="ChangeUser">@this.User.Identity.Name</a>
                             </li>
                             <li class="nav-item">
                                 <img src="@Url.Content(currentUser.AvatarFullPath)" alt="User Avatar" class="rounded-circle" style="width: 40px; height: 40px;" />
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                                <a class="nav-link small" asp-area="" asp-controller="Account" asp-action="Logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                                <a class="nav-link small" asp-area="" asp-controller="Account" asp-action="Login"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
                             </li>
                         }
                     </ul>
@@ -97,14 +96,14 @@
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-5">
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - FlightTicketManager - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; @DateTime.Now.Year - FlyWithSalgueiro - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

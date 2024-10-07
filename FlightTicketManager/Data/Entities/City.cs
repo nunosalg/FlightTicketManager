@@ -18,7 +18,7 @@ namespace FlightTicketManager.Data.Entities
         public string CountryCode { get; set; }
 
 
-        [Display(Name = "Country flag")]
+        [Display(Name = "Country Flag")]
         public string FlagUrl
         {
             get

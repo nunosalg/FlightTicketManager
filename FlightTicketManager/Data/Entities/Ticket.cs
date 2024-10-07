@@ -27,12 +27,13 @@ namespace FlightTicketManager.Data.Entities
 
 
         [Required]
-        [Display(Name = "Passenger Identification")]
+        [Display(Name = "Passenger ID")]
         public string PassengerId { get; set; }
 
 
         [Required]
-        [Display(Name = "Passenger birthdate")]
+        [Display(Name = "Passenger Birthdate")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = false)]
         public DateTime PassengerBirthDate { get; set; }
 
 

@@ -33,6 +33,7 @@ namespace FlightTicketManager.Controllers
             _mailHelper = mailHelper;
         }
 
+        // GET: Account/Login
         public IActionResult Login()
         {
             if (User.Identity.IsAuthenticated)
@@ -61,6 +62,7 @@ namespace FlightTicketManager.Controllers
             }
 
             this.ModelState.AddModelError(string.Empty, "Failed to login");
+
             return View(model);
         }
 
@@ -70,6 +72,7 @@ namespace FlightTicketManager.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        // GET: Account/Register
         public IActionResult Register()
         {
             return View();
@@ -83,6 +86,12 @@ namespace FlightTicketManager.Controllers
                 var user = await _userHelper.GetUserByEmailAsync(model.Username);
                 if(user == null)
                 {
+                    if(model.BirthDate.AddYears(18) > DateTime.Now)
+                    {
+                        ModelState.AddModelError("", "The user has less than 18 years and can't register.");
+                        return View(model);
+                    }
+
                     user = new User
                     {
                         FirstName = model.FirstName,
@@ -115,7 +124,7 @@ namespace FlightTicketManager.Controllers
 
                     if (response.IsSuccess)
                     {
-                        ViewBag.Message = "The instructions to allow you user have been sent to email";
+                        ViewBag.Message = "Check your email to finalize the register";
                         return View(model);
                     }
 
@@ -128,6 +137,7 @@ namespace FlightTicketManager.Controllers
             return View(model);
         }
 
+        // GET: Account/ChangeUser
         public async Task<IActionResult> ChangeUser()
         {
             var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
@@ -175,6 +185,7 @@ namespace FlightTicketManager.Controllers
             return View(model);
         }
 
+        // GET: Account/ChangePassword
         public IActionResult ChangePassword()
         {
             return View();
@@ -320,6 +331,7 @@ namespace FlightTicketManager.Controllers
             return this.View(model);
         }
 
+        // GET: Account/RecoverPassword
         public IActionResult RecoverPassword()
         {
             return View();
@@ -344,8 +356,8 @@ namespace FlightTicketManager.Controllers
                     "Account",
                     new { token = myToken }, protocol: HttpContext.Request.Scheme);
 
-                Response response = await _mailHelper.SendEmailAsync(model.Email, "Flight Ticket Manager Password Reset", $"<h1>FWS Password Reset</h1>" +
-                $"To reset the password click in this link:</br></br>" +
+                Response response = await _mailHelper.SendEmailAsync(model.Email, "FWS Password Reset", $"<h1>Fly With Salgueiro Password Reset</h1>" +
+                $"To reset the password click on this link:</br></br>" +
                 $"<a href = \"{link}\">Reset Password</a>");
 
                 if (response.IsSuccess)
@@ -360,6 +372,7 @@ namespace FlightTicketManager.Controllers
             return this.View(model);
         }
 
+        // GET: Account/ResetPassword
         public IActionResult ResetPassword(string token)
         {
             return View();
@@ -374,8 +387,7 @@ namespace FlightTicketManager.Controllers
                 var result = await _userHelper.ResetPasswordAsync(user, model.Token, model.NewPassword);
                 if (result.Succeeded)
                 {
-                    this.ViewBag.Message = "Password reset successful.";
-                    return View();
+                    return this.RedirectToAction("Login");
                 }
 
                 this.ViewBag.Message = "Error while resetting the password.";

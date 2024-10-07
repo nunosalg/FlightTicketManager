@@ -26,7 +26,7 @@ namespace FlightTicketManager.Models
 
 
         [Required]
-        [Display(Name = "Passenger Identification")]
+        [Display(Name = "Passenger ID")]
         [StringLength(8)]
         public string PassengerId { get; set; }
 
@@ -39,6 +39,7 @@ namespace FlightTicketManager.Models
         public List<string> AvailableSeats { get; set; }
 
 
+        [Display(Name = "Price (€)")]
         [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
         public decimal Price { get; set; }
 

@@ -6,5 +6,7 @@ namespace FlightTicketManager.Data.Repositories
     public interface ICityRepository : IGenericRepository<City>
     {
         Task<City> GetByIdWithTrackingAsync(int id);
+
+        Task<bool> CheckIfCityExistsByName(string name);
     }
 }

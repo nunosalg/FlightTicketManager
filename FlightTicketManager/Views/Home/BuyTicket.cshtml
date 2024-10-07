@@ -2,74 +2,77 @@
 
 @{
     ViewData["Title"] = "Buy Ticket";
-    var maxDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+    var maxDate = DateTime.Now;
 }
+<h1 class="text-center">@ViewData["Title"]</h1>
+<div class="card-container">
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="BuyTicket" method="post">
+                <input type="hidden" asp-for="FlightId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<h1>Buy Ticket</h1>
+                <div class="form-group">
+                    <label asp-for="Flight.FlightNumber" class="control-label">Flight Number</label>
+                    <input asp-for="Flight.FlightNumber" class="form-control" readonly />
+                </div>
 
-<form asp-action="BuyTicket" method="post">
-    <input type="hidden" asp-for="FlightId" />
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Flight.DepartureDateTime" class="control-label">Departure</label>
+                    <input asp-for="Flight.DepartureDateTime" class="form-control" readonly />
+                </div>
 
-    <div class="form-group">
-        <label asp-for="Flight.FlightNumber" class="control-label">Flight Number</label>
-        <input asp-for="Flight.FlightNumber" class="form-control" disabled />
+                <div class="form-group">
+                    <label asp-for="Flight.Origin" class="control-label">Origin</label>
+                    <input asp-for="Flight.Origin.Name" class="form-control" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Flight.Destination" class="control-label">Destination</label>
+                    <input asp-for="Flight.Destination.Name" class="form-control" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Price" class="control-label">Price (€)</label>
+                    <input asp-for="Price" class="form-control" disabled />
+                    <input type="hidden" asp-for="Price" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PassengerName">Passenger Name</label>
+                    <input asp-for="PassengerName" class="form-control" />
+                    <span asp-validation-for="PassengerName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PassengerId">Passenger ID</label>
+                    <input asp-for="PassengerId" class="form-control" />
+                    <span asp-validation-for="PassengerId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PassengerBirthDate" class="control-label">Passenger Birthdate</label>
+                    <ejs-datetimepicker name="PassengerBirthDate" id="datetimepicker" format="dd/MM/yyyy" max="maxDate" placeholder="Select a date"></ejs-datetimepicker>
+                    <span asp-validation-for="PassengerBirthDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Seat" class="control-label">Select Seat</label>
+                    <select asp-for="Seat" class="form-control" asp-items="@(new SelectList(Model.AvailableSeats))">
+                        <option value="">-- Select a seat --</option>
+                    </select>
+                    <span asp-validation-for="Seat" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa-solid fa-ticket"></i> Buy Ticket
+                    </button>
+                    <a asp-action="AvailableFlights" class="btn btn-secondary"><i class="fa-solid fa-house"></i> Homepage</a>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label asp-for="Flight.DepartureDateTime" class="control-label">Departure</label>
-        <input asp-for="Flight.DepartureDateTime" class="form-control" disabled />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Flight.Origin" class="control-label">Origin</label>
-        <input asp-for="Flight.Origin.Name" class="form-control" disabled />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Flight.Destination" class="control-label">Destination</label>
-        <input asp-for="Flight.Destination.Name" class="form-control" disabled />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Price" class="control-label">Price</label>
-        <input asp-for="Price" class="form-control" disabled />
-        <input type="hidden" asp-for="Price" />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="PassengerName">Passenger Name</label>
-        <input asp-for="PassengerName" class="form-control" />
-        <span asp-validation-for="PassengerName" class="text-warning"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="PassengerId">Passenger ID</label>
-        <input asp-for="PassengerId" class="form-control" />
-        <span asp-validation-for="PassengerId" class="text-warning"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="PassengerBirthDate" class="control-label">Passenger Birthdate</label>
-        <ejs-datetimepicker name="PassengerBirthDate" id="datetimepicker" format="dd/MM/yyyy" max="maxDate" placeholder="Select a date"></ejs-datetimepicker>
-        <span asp-validation-for="PassengerBirthDate" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Seat" class="control-label">Select Seat</label>
-        <select asp-for="Seat" class="form-control" asp-items="@(new SelectList(Model.AvailableSeats))">
-            <option value="">-- Select a seat --</option>
-        </select>
-        <span asp-validation-for="Seat" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <input type="submit" value="Buy Ticket" class="btn btn-primary" />
-    </div>
-</form>
-
-<div>
-    <a asp-action="AvailableFlights">Back to Available Flights</a>
 </div>
 
 @section Scripts {

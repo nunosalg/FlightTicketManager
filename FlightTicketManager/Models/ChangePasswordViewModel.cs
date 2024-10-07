@@ -5,16 +5,17 @@ namespace FlightTicketManager.Models
     public class ChangePasswordViewModel
     {
         [Required]
-        [Display(Name = "Current password")]
+        [Display(Name = "Current Password")]
         public string OldPassword { get; set; }
 
 
         [Required]
-        [Display(Name = "New password")]
+        [Display(Name = "New Password")]
         public string NewPassword { get; set; }
 
 
         [Required]
+        [Display(Name = "Confirm Password")]
         [Compare("NewPassword")]
         public string Confirm { get; set; }
     }

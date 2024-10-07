@@ -1,15 +1,13 @@
 ﻿@model FlightTicketManager.Models.AdminRegisterNewUserViewModel
 
 @{
-    ViewData["Title"] = "Create";
-    var maxDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+    ViewData["Title"] = "Add User";
+    var maxDate = DateTime.Now;
 }
 
-<h1>Create User</h1>
-
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<h1 class="text-center">@ViewData["Title"]</h1>
+<div class="card-container">
+    <div class="card">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -46,8 +44,12 @@
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                <button type="submit" class="btn btn-success" style="width: auto">
+                    <i class="fa-solid fa-plus"></i> Add User
+                </button>
+                <a asp-action="Index" class="btn btn-secondary" style="width: auto">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Users
+                 </a>
             </div>
         </form>
     </div>

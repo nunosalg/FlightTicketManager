@@ -19,5 +19,9 @@ namespace FlightTicketManager.Models
 
 
         public string Role { get; set; }
+
+
+        [Display(Name = "Name")]
+        public string FullName => $"{FirstName} {LastName}";
     }
 }

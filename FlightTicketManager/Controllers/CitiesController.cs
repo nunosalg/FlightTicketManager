@@ -59,18 +59,19 @@ namespace FlightTicketManager.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
+                if (!await _cityRepository.CheckIfCityExistsByName(city.Name))
                 {
                     city.CountryCode = city.CountryCode.ToUpper();
 
                     await _cityRepository.CreateAsync(city);
                     return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateException)
-                {
-                    return new NotFoundViewResult("CityAlreadyExists");
-                }
+
+                ModelState.AddModelError("Name", "City already exists.");
             }
+
+            ModelState.AddModelError("", "Couldn't create city.");
+
             return View(city);
         }
 

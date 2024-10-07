@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace FlightTicketManager.Data.Entities
@@ -7,11 +8,16 @@ namespace FlightTicketManager.Data.Entities
     {
         public string FirstName { get; set; }
 
+
         public string LastName { get; set; }
 
+
+        [Display(Name = "Birthdate")]
         public DateTime BirthDate { get; set; }
 
+
         public string AvatarUrl { get; set; }
+
 
         public string AvatarFullPath
         {
@@ -26,6 +32,8 @@ namespace FlightTicketManager.Data.Entities
             }
         }
 
+
+        [Display(Name ="Name")]
         public string Fullname => $"{FirstName} {LastName}";
     }
 }

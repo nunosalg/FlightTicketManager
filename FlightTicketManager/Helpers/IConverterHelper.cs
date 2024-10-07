@@ -16,7 +16,5 @@ namespace FlightTicketManager.Helpers
         Task<FlightViewModel> ToFlightViewModelAsync(Flight flight, int aircraftId, User user, List<Ticket> tickets);
 
         Task<Ticket> ToTicketAsync(BuyTicketViewModel model, User user, int flightId);
-
-        TicketConfirmationViewModel ToTicketConfirmationViewModel(Ticket ticket);
     }
 }

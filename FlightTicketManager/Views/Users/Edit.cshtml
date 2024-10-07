@@ -1,15 +1,16 @@
 ﻿@model FlightTicketManager.Models.AdminEditUserViewModel
 
 @{
-    ViewData["Title"] = "Edit";
-    var maxDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+    ViewData["Title"] = "Edit User";
+    var maxDate = DateTime.Now;
 }
 
-<h1>Edit User</h1>
-<div class="row">
-    <div class="col-md-4 offset-md-4">
+<h1 class="text-center">@ViewData["Title"]</h1>
+
+<div class="card-container">
+    <div class="card">
         <form method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
 
             <div class="form-group">
@@ -33,8 +34,14 @@
                 <select asp-for="SelectedRole" class="form-control" asp-items="Model.RolesSelectList"></select>
                 <span asp-validation-for="SelectedRole" class="text-danger"></span>
             </div>
-            <input type="submit" value="Save" class="btn btn-primary" />
-            <div class="text-success">@ViewBag.UserMessage</div>
+
+            <button type="submit" class="btn btn-success" style="width: auto">
+                <i class="fa-solid fa-floppy-disk"></i> Save
+            </button>
+            <a asp-action="Index" class="btn btn-secondary" style="width: auto">
+                <i class="fa-solid fa-arrow-left"></i> Cancel
+            </a>
+
         </form>
     </div>
 </div>

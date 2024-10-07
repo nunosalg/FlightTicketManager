@@ -72,6 +72,7 @@ namespace FlightTicketManager
             services.AddScoped<IImageHelper, ImageHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddScoped<IMailHelper, MailHelper>();
+            services.AddScoped<IFlightHelper, FlightHelper>();
 
             // Repositories
             services.AddScoped<IAircraftRepository, AircraftRepository>();
@@ -83,7 +84,6 @@ namespace FlightTicketManager
 
             // Services
             services.AddScoped<IHistoryService, HistoryService>();
-            services.AddSingleton<IFlightServiceFactory, FlightServiceFactory>();
             services.AddHostedService<FlightDepartureService>();
 
             services.ConfigureApplicationCookie(options =>

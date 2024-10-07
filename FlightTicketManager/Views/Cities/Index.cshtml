@@ -4,48 +4,59 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Cities list</h1>
-
+<h1>Cities List</h1>
 <p>
-    <a asp-action="Create" class="btn btn-primary">Add new city</a>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> Add City
+    </a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CountryCode)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FlagUrl)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CountryCode)
-                </td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.FlagUrl))
-                    {
-                        <img src="@Url.Content(item.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="card-container" style="justify-content: flex-start;">
+    <div class="card">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.CountryCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FlagUrl)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center align-middle">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td class="text-center align-middle">
+                            @Html.DisplayFor(modelItem => item.CountryCode)
+                        </td>
+                        <td class="text-center align-middle">
+                            @if (!string.IsNullOrEmpty(item.FlagUrl))
+                            {
+                                <img src="@Url.Content(item.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
+                            }
+                        </td>
+                        <td class="text-center align-middle">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-edit" style="width: auto">
+                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info" style="width: auto">
+                                <i class="fa-solid fa-list"></i> Details
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger" style="width: auto">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,23 +1,37 @@
-﻿@model ChangeSeatViewModel
+﻿@model FlightTicketManager.Models.ChangeSeatViewModel
 
-<h2>Change Seat</h2>
+@{
+    ViewData["Title"] = "Change Seat";
+}
 
-<form asp-action="ChangeSeat" method="post">
-    <input type="hidden" asp-for="TicketId" />
-    <input type="hidden" asp-for="FlightId" />
+<h1 class="text-center">@ViewData["Title"]</h1>
+<div class="card-container">
+    <div class="card">
+        <form asp-action="ChangeSeat" method="post">
+            <input type="hidden" asp-for="TicketId" />
+            <input type="hidden" asp-for="FlightId" />
 
-    <div class="form-group">
-        <label>Current Seat</label>
-        <input asp-for="CurrentSeat" class="form-control" readonly />
+            <div class="form-group">
+                <label asp-for="CurrentSeat">Current Seat</label>
+                <input asp-for="CurrentSeat" class="form-control" readonly />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="NewSeat">Select New Seat</label>
+                <select asp-for="NewSeat" class="form-control" asp-items="@(new SelectList(Model.AvailableSeats))">
+                    <option value="">-- Select a seat --</option>
+                </select>
+                <span asp-validation-for="NewSeat" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">
+                    <i class="fa-solid fa-chair"></i> Change Seat
+                </button>
+                <a asp-action="MyFlights" class="btn btn-secondary" style="width:auto">
+                    <i class="fa-solid fa-arrow-left"></i> Back to My Flights
+                </a>
+            </div>
+        </form>
     </div>
-
-    <div class="form-group">
-        <label for="NewSeat">Select New Seat</label>
-        <select asp-for="NewSeat" class="form-control" asp-items="@(new SelectList(Model.AvailableSeats))">
-            <option value="">-- Select a seat --</option>
-        </select>
-        <span asp-validation-for="NewSeat" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Change Seat</button>
-</form>
+</div>

@@ -8,6 +8,7 @@ using FlightTicketManager.Models;
 using FlightTicketManager.Data.Repositories;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FlightTicketManager.Controllers
 {
@@ -83,13 +84,14 @@ namespace FlightTicketManager.Controllers
             return View("Index");
         }
 
-        // GET: Flights
+        // GET: Home/Flights
         public IActionResult AvailableFlights()
         {
             return View(_flightRepository.GetAvailableWithAircraftsAndCities());
         }
 
-        // GET: BuyTicket
+        // GET: Home/BuyTicket
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> BuyTicket(int? id)
         {
             if (!this.User.Identity.IsAuthenticated)
@@ -119,13 +121,20 @@ namespace FlightTicketManager.Controllers
             model.SetTicketPrice();
 
             return View(model);
+        
         }
 
-        // POST: BuyTicket
+        // POST: Home/BuyTicket
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BuyTicket(BuyTicketViewModel model)
         {
+            // Remove ModelState errors for complex properties
+            ModelState.Remove("Flight.User");
+            ModelState.Remove("Flight.Aircraft");
+            ModelState.Remove("Flight.Origin.CountryCode");
+            ModelState.Remove("Flight.Destination.CountryCode");
+
             if (ModelState.IsValid)
             {
                 var flight = await _flightRepository.GetByIdWithUsersAircraftsAndCitiesAsync(model.FlightId);
@@ -165,7 +174,8 @@ namespace FlightTicketManager.Controllers
             return View(model);
         }
 
-        // GET: TicketConfirmation
+        // GET: Home/TicketConfirmation
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> TicketConfirmation(int id)
         {
             var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(id);
@@ -177,6 +187,8 @@ namespace FlightTicketManager.Controllers
             return View(ticket);
         }
 
+        // GET: Home/MyFlights
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> MyFlights()
         {
             var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
@@ -185,11 +197,13 @@ namespace FlightTicketManager.Controllers
                 return new NotFoundViewResult("UserNotFound");
             }
 
-            var tickets = _ticketRepository.GetTicketsByUserEmail(user.Email);
+            var tickets = _ticketRepository.GetTicketsByUserEmail(user.Email).ToList();
 
             return View(tickets);
         }
 
+        // GET: Home/MyFlightsHistory
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> MyFlightsHistory()
         {
             var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
@@ -203,7 +217,8 @@ namespace FlightTicketManager.Controllers
             return View(tickets);
         }
 
-        // GET: ChangeSeat
+        // GET: Home/ChangeSeat
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> ChangeSeat(int id)
         {
             var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(id);
@@ -224,14 +239,14 @@ namespace FlightTicketManager.Controllers
             return View(model);
         }
 
-        // POST: ChangeSeat
+        // POST: Home/ChangeSeat
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeSeat(ChangeSeatViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(model.FlightId);
+                var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(model.TicketId);
                 if (ticket == null)
                 {
                     return new NotFoundViewResult("TicketNotFound");
@@ -252,7 +267,8 @@ namespace FlightTicketManager.Controllers
             return View(model);
         }
 
-        // GET: CancelTicket
+        // GET: Home/CancelTicket
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> CancelTicket(int? id)
         {
             var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(id.Value);
@@ -264,7 +280,7 @@ namespace FlightTicketManager.Controllers
             return View(ticket);
         }
 
-        // POST: CancelTicket
+        // POST: Home/CancelTicket
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CancelTicket(int id)

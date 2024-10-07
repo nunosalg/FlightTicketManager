@@ -115,10 +115,16 @@ namespace FlightTicketManager.Controllers
                             return RedirectToAction(nameof(Index));
                         }
                     }
+
+                    
+                }
+
+                if (user != null)
+                {
+                    ModelState.AddModelError(model.Username, "Email already exists in database.");
                 }
 
                 ModelState.AddModelError("", "Failed to create user.");
-                ModelState.AddModelError(model.Username, "Email already exists in database.");
             }
 
             return View(model);

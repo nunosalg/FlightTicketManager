@@ -39,7 +39,7 @@ namespace FlightTicketManager.Helpers
             {
                 using (var client = new SmtpClient())
                 {
-                    client.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+                    //client.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
 
                     await client.ConnectAsync(smtp, int.Parse(port), SecureSocketOptions.StartTls);
                     await client.AuthenticateAsync(from, password);
@@ -73,16 +73,11 @@ namespace FlightTicketManager.Helpers
                               "Thank you for your understanding.";
 
                 var response = await SendEmailAsync(userEmail, subject, message);
-                if (!response.IsSuccess)
-                {
-                    // Log error if email failed to send
-                    Console.WriteLine($"Error sending email to {userEmail}: {response.Message}");
-                }
+                
             }
             catch (Exception ex)
             {
-                // Log the exception
-                Console.WriteLine($"Error sending cancellation email: {ex.Message}");
+                throw new Exception(ex.Message, ex);
             }
         }
     }

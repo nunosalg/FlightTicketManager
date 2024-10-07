@@ -9,8 +9,9 @@ namespace FlightTicketManager.Models
         public string Username { get; set; }
 
 
-        [Required]
         [MinLength(6)]
+        [Required(ErrorMessage = "Password is required.")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least {2} characters long.")]
         public string Password { get; set; }
 
 

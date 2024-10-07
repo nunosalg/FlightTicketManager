@@ -24,6 +24,7 @@ namespace FlightTicketManager.Helpers
             _flightRepository = flightRepository;
             _userHelper = userHelper;
         }
+
         public Aircraft ToAircraft(AircraftViewModel model, string path, bool isNew)
         {
             return new Aircraft
@@ -129,22 +130,6 @@ namespace FlightTicketManager.Helpers
                 PassengerName = model.PassengerName,
                 PassengerBirthDate = model.PassengerBirthDate,
                 Price = model.Price,
-            };
-        }
-
-        public TicketConfirmationViewModel ToTicketConfirmationViewModel(Ticket ticket)
-        {
-            return new TicketConfirmationViewModel
-            {
-                TicketId = ticket.Id,
-                FlightNumber = ticket.Flight.FlightNumber,
-                Origin = ticket.Flight.Origin.Name,
-                Destination = ticket.Flight.Destination.Name,
-                DepartureDateTime = ticket.Flight.DepartureDateTime,
-                Seat = ticket.Seat,
-                PassengerName = ticket.PassengerName,
-                PassengerId = ticket.PassengerId,
-                PassengerBirthDate = ticket.PassengerBirthDate,
             };
         }
     }

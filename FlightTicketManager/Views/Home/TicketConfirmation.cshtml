@@ -4,68 +4,135 @@
     ViewData["Title"] = "Ticket Confirmation";
 }
 
-<h1>Ticket Confirmation</h1>
+<h1 class="text-center">@ViewData["Title"]</h1>
 
-<div class="alert alert-success" role="alert">
-    Your ticket has been successfully purchased!
-</div>
+<div class="card-container">
+    <div class="card">
+        <div class="alert alert-success text-center" role="alert">
+            Your ticket has been successfully purchased!
+        </div>
+        <div class="card-body">
 
-<div class="row">
-    <div class="col-md-8">
-        <dl class="row">
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Flight.FlightNumber)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Flight.FlightNumber)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Flight.DepartureDateTime)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Flight.DepartureDateTime)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Flight.Origin.Name)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Flight.Origin.Name)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Flight.Destination.Name)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Flight.Destination.Name)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Seat)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Seat)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.PassengerName)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.PassengerName)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.PassengerId)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.PassengerId)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.PassengerBirthDate)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.PassengerBirthDate)
-            </dd>
-        </dl>
+            <div class="mb-1">
+                <label><strong>@Html.DisplayNameFor(model => model.Flight.FlightNumber)</strong></label>
+                <p>@Html.DisplayFor(model => model.Flight.FlightNumber)</p>
+            </div>
+
+            <div class="mb-1">
+                <label><strong>@Html.DisplayNameFor(model => model.Flight.DepartureDateTime)</strong></label>
+                <p>@Html.DisplayFor(model => model.Flight.DepartureDateTime)</p>
+            </div>
+
+            <div class="mb-1">
+                <label><strong>@Html.DisplayNameFor(model => model.Flight.Origin)</strong></label>
+                <p>@Html.DisplayFor(model => model.Flight.Origin.Name)</p>
+            </div>
+
+            <div class="mb-1">
+                <label><strong>@Html.DisplayNameFor(model => model.Flight.Destination)</strong></label>
+                <p>@Html.DisplayFor(model => model.Flight.Destination.Name)</p>
+            </div>
+
+            <div class="mb-1">
+                <label><strong>@Html.DisplayNameFor(model => model.Seat)</strong></label>
+                <p>@Html.DisplayFor(model => model.Seat)</p>
+            </div>
+
+            <div class="mb-1">
+                <label><strong>@Html.DisplayNameFor(model => model.PassengerName)</strong></label>
+                <p>@Html.DisplayFor(model => model.PassengerName)</p>
+            </div>
+
+            <div class="mb-1">
+                <label><strong>@Html.DisplayNameFor(model => model.PassengerId)</strong></label>
+                <p>@Html.DisplayFor(model => model.PassengerId)</p>
+            </div>
+
+            <div class="mb-1">
+                <label><strong>@Html.DisplayNameFor(model => model.PassengerBirthDate)</strong></label>
+                <p>@Html.DisplayFor(model => model.PassengerBirthDate)</p>
+            </div>
+
+            <!-- Buttons centered below the content -->
+            <div class="text-center mt-3">
+                <a asp-action="AvailableFlights" class="btn btn-primary" style="width:auto">
+                    <i class="fa-solid fa-plane-departure"></i> My Flights
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fa-solid fa-house"></i> Homepage
+                </a>
+            </div>
+        </div>
     </div>
 </div>
-
-<div>
-    <a asp-action="AvailableFlights" class="btn btn-primary">Back to Available Flights</a>
-    <a asp-action="Index" class="btn btn-secondary">Home</a>
+    </div>
 </div>
+@* <div class="card-container">
+    <div class="card">
+        <div class="card-body">
+            <div class="alert alert-success text-center" role="alert">
+                Your ticket has been successfully purchased!
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-3">
+                            @Html.DisplayNameFor(model => model.Flight.FlightNumber)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.Flight.FlightNumber)
+                        </dd>
+                        <dt class="col-sm-3">
+                            @Html.DisplayNameFor(model => model.Flight.DepartureDateTime)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.Flight.DepartureDateTime)
+                        </dd>
+                        <dt class="col-sm-3">
+                            @Html.DisplayNameFor(model => model.Flight.Origin.Name)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.Flight.Origin.Name)
+                        </dd>
+                        <dt class="col-sm-3">
+                            @Html.DisplayNameFor(model => model.Flight.Destination.Name)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.Flight.Destination.Name)
+                        </dd>
+                        <dt class="col-sm-3">
+                            @Html.DisplayNameFor(model => model.Seat)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.Seat)
+                        </dd>
+                        <dt class="col-sm-3">
+                            @Html.DisplayNameFor(model => model.PassengerName)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.PassengerName)
+                        </dd>
+                        <dt class="col-sm-3">
+                            @Html.DisplayNameFor(model => model.PassengerId)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.PassengerId)
+                        </dd>
+                        <dt class="col-sm-3">
+                            @Html.DisplayNameFor(model => model.PassengerBirthDate)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.PassengerBirthDate)
+                        </dd>
+                    </dl>
+                    <div>
+                        <a asp-action="AvailableFlights" class="btn btn-primary" style="width:auto"><i class="fa-solid fa-plane-departure"></i> My Flights</a>
+                        <a asp-action="Index" class="btn btn-secondary"><i class="fa-solid fa-house"></i> Homepage</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> *@
+
+

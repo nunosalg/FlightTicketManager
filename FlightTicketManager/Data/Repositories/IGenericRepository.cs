@@ -16,6 +16,5 @@ namespace FlightTicketManager.Data.Repositories
         Task DeleteAsync(T entity);
 
         Task<bool> ExistAsync(int id);
-
     }
 }

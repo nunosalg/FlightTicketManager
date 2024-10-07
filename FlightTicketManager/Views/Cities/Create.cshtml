@@ -1,31 +1,43 @@
 ﻿@model FlightTicketManager.Data.Entities.City
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add City";
 }
 
-<h1>New city</h1>
+<h1 class="text-center">@ViewData["Title"]</h1>
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="card-container">
+    <div class="card">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="CountryCode" class="control-label"></label>
                 <input asp-for="CountryCode" class="form-control" />
                 <span asp-validation-for="CountryCode" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <input type="submit" value="Add city" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-success">Back to List</a>
+                <button type="submit" class="btn btn-success" style="width: auto">
+                    <i class="fa-solid fa-plus"></i> Add City
+                </button>
+                <a asp-action="Index" class="btn btn-secondary" style="width: auto">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Cities
+                </a>
             </div>
+
         </form>
     </div>
 </div>
 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

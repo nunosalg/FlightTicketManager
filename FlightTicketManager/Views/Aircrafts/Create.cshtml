@@ -1,22 +1,25 @@
 ﻿@model FlightTicketManager.Models.AircraftViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add Aircraft";
 }
 
-<h1>New Aircraft</h1>
+<h1 class="text-center">@ViewData["Title"]</h1>
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="card-container">
+    <div class="card">
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             
             <partial name="_Aircrafts" />
 
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-success">Back to List</a>
+                <button type="submit" class="btn btn-success" style="width: auto">
+                    <i class="fa-solid fa-plus"></i> Add Aircraft
+                </button>
+                <a asp-action="Index" class="btn btn-secondary" style="width: auto">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Aircrafts
+                </a>
             </div>
         </form>
     </div>

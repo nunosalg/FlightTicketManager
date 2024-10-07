@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using FlightTicketManager.Data.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using FlightTicketManager.Data.Repositories;
 
 namespace FlightTicketManager.Services
 {

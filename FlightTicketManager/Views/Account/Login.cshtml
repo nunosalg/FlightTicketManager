@@ -4,34 +4,56 @@
     ViewData["Title"] = "Login";
 }
 
-<h1>Login</h1>
-
-<div class="row">
-    <div class="col-md-4 offset-md-4">
+@* <h1 class="text-center">@ViewData["Title"]</h1> *@
+<div class="card-container" style="justify-content: flex-start;">
+    <div class="card" style="background-color:transparent">
+        <h2 class="card-title text-center">@ViewData["Title"]</h2>
         <form method="post">
-            <div asp-validation-summary="ModelOnly"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
                 <label asp-for="Username">Username</label>
-                <input asp-for="Username" class="form-control" />
-                <span asp-validation-for="Username" class="text-warning"></span>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                    </div>
+                    <input asp-for="Username" class="form-control" placeholder="Enter your username" />
+                </div>
+                <span asp-validation-for="Username" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Password">Password</label>
-                <input asp-for="Password" type="password" class="form-control" />
-                <span asp-validation-for="Password" class="text-warning"></span>
-            </div>
-            <div class="form-group">
-                <div class="form-check">
-                    <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
-                    <label asp-for="RememberMe" class="form-check-label">Remember Me?</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                    </div>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" id="password" />
                 </div>
-                <span asp-validation-for="RememberMe" class="text-warning"></span>
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
+
+            <div class="d-inline-flex" style="margin-bottom: 15px">
+                @* <div class="form-check mr-2">
+                    <ejs-checkbox id="showPasswordCheckbox" label="Show Password" change="onShowPasswordChange"></ejs-checkbox>
+                </div> *@
+                <div class="form-check">
+                    <ejs-checkbox style="background-color: black" id="RememberMe" label="Remember Me?" name="RememberMe" value="true" checked="@(Model?.RememberMe ?? false)"></ejs-checkbox>
+                </div>
+            </div>
+            <span asp-validation-for="RememberMe" class="text-danger"></span>
+
             <div class="form-group">
-                <input type="submit" value="Login" class="btn btn-success" />
-                <a asp-action="Register" class="btn btn-primary">Register New User</a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </button>
+                <a asp-action="Register" class="btn btn-primary" style="width:auto"><i class="fa-solid fa-address-card"></i> Register New User</a>
+            </div>
+
+            <div class="form-group">
                 <a asp-action="RecoverPassword" class="btn btn-link">Forgot your password?</a>
             </div>
+
         </form>
     </div>
 </div>
@@ -40,4 +62,11 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    @* <script>
+        // Syncfusion Checkbox Change event handler
+        function onShowPasswordChange(args) {
+            var input = document.getElementById('password');
+            input.type = args.checked ? 'text' : 'password'; // Toggle visibility
+        }
+    </script> *@
 }

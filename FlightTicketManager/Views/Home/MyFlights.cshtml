@@ -1,55 +1,110 @@
-﻿@model IQueryable<FlightTicketManager.Data.Entities.Ticket>
+﻿@model IEnumerable<FlightTicketManager.Data.Entities.Ticket>
 
 @{
     ViewData["Title"] = "My Flights";
 }
 
-<h1>My Flights</h1>
-
+<h1 class="text-center">@ViewData["Title"]</h1>
 @if (!Model.Any())
 {
-    <p>No flights found.</p>
+    <p class="text-center">You have no future flights.</p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Flight Number</th>
-                <th>Origin</th>
-                <th>Destination</th>
-                <th>Departure Date</th>
-                <th>Duration</th>
-                <th>Aircraft</th>
-                <th>Seat</th>
-                <th>Passenger Name</th>
-                <th>Passenger ID</th>
-                <th>Passenger Birthdate</th>
-                <th>Ticket Price</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var ticket in Model)
-            {
-                <tr>
-                    <td>@ticket.Flight.FlightNumber</td>
-                    <td>@ticket.Flight.Origin.Name</td>
-                    <td>@ticket.Flight.Destination.Name</td>
-                    <td>@ticket.Flight.DepartureDateTime.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@ticket.Flight.FlightDuration</td>
-                    <td>@ticket.Flight.Aircraft.Data</td>
-                    <td>@ticket.Seat</td>
-                    <td>@ticket.PassengerName</td>
-                    <td>@ticket.PassengerId</td>
-                    <td>@ticket.PassengerBirthDate.ToString("dd/MM/yyyy")</td>
-                    <td>@String.Format("{0:C}", ticket.Price)</td>
-                    <td>
-                        <a asp-action="ChangeSeat" asp-route-id="@ticket.Id">Change Seat</a>
-                        <a asp-action="CancelTicket" asp-route-id="@ticket.Id">Cancel Ticket</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="card-container">
+        <div class="card">
+            <table class="table table-striped table-hover">
+                <thead class="text-center align-middle">
+                    <tr class="text-center align-middle">
+                        <th class="text-center align-middle">
+                            @Html.DisplayNameFor(model => model.Flight.FlightNumber)
+                        </th>
+                        <th class="text-center align-middle">
+                            @Html.DisplayNameFor(model => model.Flight.Origin)
+                        </th>
+                        <th class="text-center align-middle">
+                            @Html.DisplayNameFor(model => model.Flight.Destination)
+                        </th>
+                        <th class="text-center align-middle">
+                            @Html.DisplayNameFor(model => model.Flight.DepartureDateTime)
+                        </th>
+                        <th class="text-center align-middle">
+                            @Html.DisplayNameFor(model => model.Flight.FlightDuration)
+                        </th>
+                        <th class="text-center align-middle">
+                            @Html.DisplayNameFor(model => model.Flight.Aircraft)
+                        </th>
+                        <th class="text-center align-middle">
+                            @Html.DisplayNameFor(model => model.Seat)
+                        </th>
+                        <th class="text-center align-middle">
+                            @Html.DisplayNameFor(model => model.PassengerName)
+                        </th>
+                        <th class="text-center align-middle">
+                            @Html.DisplayNameFor(model => model.PassengerId)
+                        </th>
+                        <th class="text-center align-middle">
+                            @Html.DisplayNameFor(model => model.PassengerBirthDate)
+                        </th>
+                        <th class="text-center align-middle">
+                            @Html.DisplayNameFor(model => model.Price)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="text-center align-middle">
+                            <td class="text-center align-middle">
+                                @Html.DisplayFor(modelItem => item.Flight.FlightNumber)
+                            </td>
+                            <td class="text-center align-middle">
+                                @Html.DisplayFor(modelItem => item.Flight.Origin.Name) <br />
+                                <img id="flagImageOrigin" src="@Url.Content(item.Flight.Origin.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
+                            </td>
+                            <td class="text-center align-middle">
+                                @Html.DisplayFor(modelItem => item.Flight.Destination.Name) <br />
+                                <img id="flagImageDestination" src="@Url.Content(item.Flight.Destination.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
+                            </td>
+                            <td class="text-center align-middle">
+                                @Html.DisplayFor(modelItem => item.Flight.DepartureDateTime)
+                            </td>
+                            <td class="text-center align-middle">
+                                @Html.DisplayFor(modelItem => item.Flight.FlightDuration)
+                            </td>
+                            <td class="text-center align-middle">
+                                @Html.DisplayFor(modelItem => item.Flight.Aircraft.Data)
+                            </td>
+                            <td class="text-center align-middle">
+                                @Html.DisplayFor(modelItem => item.Seat)
+                            </td>
+                            <td class="text-center align-middle">
+                                @Html.DisplayFor(modelItem => item.PassengerName)
+                            </td>
+                            <td class="text-center align-middle">
+                                @Html.DisplayFor(modelItem => item.PassengerId)
+                            </td>
+                            <td class="text-center align-middle">
+                                @Html.DisplayFor(modelItem => item.PassengerBirthDate)
+                            </td>
+                            <td class="text-center align-middle">
+                                @Html.DisplayFor(modelItem => item.Price)
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column gap-2">
+                                    <a asp-action="ChangeSeat" asp-route-id="@item.Id" class="btn btn-primary">
+                                        <i class="fa-solid fa-chair"></i> Change Seat
+                                    </a>
+                                    <a asp-action="CancelTicket" asp-route-id="@item.Id" class="btn btn-danger">
+                                        <i class="fa-solid fa-trash"></i> Cancel Ticket
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 }

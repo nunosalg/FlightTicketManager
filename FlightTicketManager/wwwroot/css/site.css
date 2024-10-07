@@ -1,71 +1,223 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
-
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
-}
-
-/* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
-}
-
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-/* Sticky footer styles
+﻿/* Sticky footer styles
 -------------------------------------------------- */
 html {
-  font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; 
+}
+
+/* Background image */
+body {
+    background-image: url('/images/fwsbackground.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    opacity: 0.9;
+    color: black;
+}
+
+/* Font */
+body {
+    font-family: 'Open-Sans', sans-serif;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    background-color: #f2f2f2; /* Light grey */
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Open-Sans', sans-serif;
+    font-weight: 500;
+}
+
+/* Buttons */
+.btn-primary {
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+    background-color: #2b3a67; /* Dark blue */
+    border-color: #2b3a67;
+    color: #ffffff;
+    width: 150px;
+}
+
+.btn-primary:hover {
+    background-color: #2b3a67;
+}
+
+.btn-edit {
+    background-color: cadetblue;
+    border-color: cadetblue;
+    color: white;
+}
+
+.btn-success, .btn-secondary, .btn-danger, .btn-edit, .btn-info {
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+    width: 150px;
+}
+
+.btn-primary:hover, .btn-secondary:hover, .btn-danger:hover, .btn-edit:hover, .btn-success:hover, .btn-info:hover {
+    color: black;
+    border-color: #2b3a67;
+}
+
+/* Nav-Bar */
+.navbar {
+    background-color: #2b3a67; /* Dark blue */
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .navbar-nav .nav-link {
+    color: #ffffff; 
+}
+
+.navbar .navbar-brand {
+    color: #ffffff; 
+}
+
+.navbar .nav-link:hover, .navbar .navbar-brand:hover {
+    color: #ced4da; /* Color when hovered (light grey for contrast) */
+}
+
+.nav-link {
+    padding: 10px 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.container {
+    padding-right: 0px;
+    padding-left: 0px;
+    width: 100vw;
+    max-width: 90%;
+}
+/* Cards */
+.card-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 20vh;
+}
+
+.card {
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+    overflow: auto;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.gap-2 {
+    gap: 10px; /* Adds space between buttons */
+}
+
+/* User image */
+.nav-item img {
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Footer*/
+.footer {
+    background-color: #2b3a67;
+    color: #ffffff;
+    text-align: center;
+}
+
+.footer a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: #ced4da;
+    text-decoration: underline;
+}
+
+/* Soft transition */
+a {
+    transition: color 0.3s ease;
+}
+
+button, .btn {
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+button:hover, .btn:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Spinner */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border: 0.3em solid #ccc;
+    border-top: 0.3em solid #007bff;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* --------- */
+.form-group {
+    margin-bottom: 15px; /* Adjust spacing between form groups */
+}
+
+.text-success {
+    margin-bottom: 20px; /* Add some space below success messages */
 }
 
 .border-top {
-  border-top: 1px solid #e5e5e5;
+    border-top: 1px solid #e5e5e5;
 }
+
 .border-bottom {
-  border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
 }
 
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+td, th, tr {
+    text-align:center;
+    align-items:center;
 }
 
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+table {
+    width: 100%;
+    table-layout: auto; /* or fixed, if you want equal-width columns */
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
-}
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+.e-checkbox-wrapper .e-frame.e-check, .e-css.e-checkbox-wrapper .e-frame.e-check {
+    background-color: #2b3a67 !important; /* Dark blue */
 }

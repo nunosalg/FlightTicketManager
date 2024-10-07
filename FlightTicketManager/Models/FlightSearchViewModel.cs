@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using FlightTicketManager.Data.Entities;
 
-
 namespace FlightTicketManager.Models
 {
     public class FlightSearchViewModel
@@ -13,11 +12,11 @@ namespace FlightTicketManager.Models
         public DateTime? DepartureDateTime { get; set; }
 
 
-        [Display(Name = "Origin")]
+        [Display(Name = "Origin City")]
         public int SelectedOrigin { get; set; }
 
 
-        [Display(Name = "Destination")]
+        [Display(Name = "Destination City")]
         public int SelectedDestination { get; set; }
 
 

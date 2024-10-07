@@ -4,12 +4,44 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Aircraft Details</h1>
+<h1 class="text-center">@ViewData["Title"]</h1>
 
-<div>
-    <partial name="_AircraftsDetailsDelete" />
+<div class="card-container">
+    <div class="card">
+        <div class="mb-3">
+            <strong>@Html.DisplayNameFor(model => model.Description)</strong>
+            @Html.DisplayFor(model => model.Description)
+        </div>
 
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-    <a asp-action="Index" class="btn btn-success">Back to List</a>
+        <div class="mb-3">
+            <strong>@Html.DisplayNameFor(model => model.Airline)</strong>
+            @Html.DisplayFor(model => model.Airline)
+        </div>
+
+        <div class="mb-3">
+            <strong>@Html.DisplayNameFor(model => model.Capacity)</strong>
+            @Html.DisplayFor(model => model.Capacity)
+        </div>
+
+        <div class="mb-3">
+            <strong>@Html.DisplayNameFor(model => model.IsActive)</strong>
+            @Html.DisplayFor(model => model.IsActive)
+        </div>
+
+        <div class="mb-3">
+            <img src="@Url.Content(Model.ImageFullPath)" alt="Image" style="width:200px;height:300px;max-width:100%;height:auto">
+        </div>
+
+        <hr />
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-edit" style="width: auto">
+                <i class="fa-solid fa-pen-to-square"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary" style="width: auto">
+                <i class="fa-solid fa-arrow-left"></i> Cancel
+            </a>
+        </div>
+    </div>
 </div>
+
 

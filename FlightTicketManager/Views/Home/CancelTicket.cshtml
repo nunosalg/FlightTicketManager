@@ -1,48 +1,60 @@
 ﻿@model FlightTicketManager.Data.Entities.Ticket
 
 @{
-    ViewData["Title"] = "CancelTicket";
+    ViewData["Title"] = "Cancel Ticket";
 }
 
-<h1>Cancel Ticket</h1>
+<h1 class="text-center">@ViewData["Title"]</h1>
+<div class="card-container">
+    <div class="card">
+        <form asp-action="CancelTicket">
+            <input type="hidden" asp-for="Id" />
 
-<form asp-action="CancelTicket">
-    <input type="hidden" asp-for="Id" />
+            <div class="mb-4">
+                <h5><strong>Flight Information</strong></h5>
+                <div class="form-group">
+                    <label><strong>@Html.DisplayNameFor(model => model.Flight.FlightNumber)</strong></label>
+                    <p>@Html.DisplayFor(model => model.Flight.FlightNumber)</p>
+                </div>
+                <div class="form-group">
+                    <label><strong>@Html.DisplayNameFor(model => model.Flight.DepartureDateTime)</strong></label>
+                    <p>@Html.DisplayFor(model => model.Flight.DepartureDateTime)</p>
+                </div>
+                <div class="form-group">
+                    <label><strong>@Html.DisplayNameFor(model => model.Flight.Origin)</strong></label>
+                    <p>@Html.DisplayFor(model => model.Flight.Origin.Name)</p>
+                </div>
+                <div class="form-group">
+                    <label><strong>@Html.DisplayNameFor(model => model.Flight.Destination)</strong></label>
+                    <p>@Html.DisplayFor(model => model.Flight.Destination.Name)</p>
+                </div>
+            </div>
 
-    <div class="form-group">
-        <label>Flight Number</label>
-        <p>@Model.Flight.FlightNumber</p>
+            <div class="mb-4">
+                <h5><strong>Passenger Information</strong></h5>
+                <div class="form-group">
+                    <label><strong>@Html.DisplayNameFor(model => model.PassengerName)</strong></label>
+                    <p>@Html.DisplayFor(model => model.PassengerName)</p>
+                </div>
+                <div class="form-group">
+                    <label><strong>@Html.DisplayNameFor(model => model.Seat)</strong></label>
+                    <p>@Html.DisplayFor(model => model.Seat)</p>
+                </div>
+            </div>
+
+            <div class="alert alert-danger">
+                <p>Are you sure you want to cancel this ticket?</p>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa-solid fa-trash"></i> Confirm
+                </button>
+                <a asp-action="MyFlights" class="btn btn-secondary" style="width:auto">
+                    <i class="fa-solid fa-arrow-left"></i> Back to My Flights
+                </a>
+            </div>
+            
+        </form>
     </div>
-
-    <div class="form-group">
-        <label>Seat</label>
-        <p>@Model.Seat</p>
-    </div>
-
-    <div class="form-group">
-        <label>Passenger Name</label>
-        <p>@Model.PassengerName</p>
-    </div>
-
-    <div class="form-group">
-        <label>Departure</label>
-        <p>@Model.Flight.DepartureDateTime</p>
-    </div>
-
-    <div class="form-group">
-        <label>Origin</label>
-        <p>@Model.Flight.Origin.Name</p>
-    </div>
-
-    <div class="form-group">
-        <label>Destination</label>
-        <p>@Model.Flight.Destination.Name</p>
-    </div>
-
-    <p>Are you sure you want to cancel this ticket?</p>
-
-    <div class="form-group">
-        <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
-        <a asp-action="MyFlights" class="btn btn-secondary">Cancel</a>
-    </div>
-</form>
+</div>

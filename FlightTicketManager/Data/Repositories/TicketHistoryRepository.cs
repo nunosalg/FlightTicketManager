@@ -1,5 +1,5 @@
-﻿using FlightTicketManager.Data.Entities;
-using System.Linq;
+﻿using System.Linq;
+using FlightTicketManager.Data.Entities;
 
 namespace FlightTicketManager.Data.Repositories
 {

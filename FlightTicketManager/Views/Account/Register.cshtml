@@ -5,23 +5,39 @@
     var maxDate = DateTime.Now;
 }
 
-<h1>Register</h1>
+<h1 class="text-center">@ViewData["Title"]</h1>
 
-<div class="row">
-    <div class="col-md-4 offset-md-4">
+<div class="card-container">
+    <div class="card" style="background-color:transparent">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            <div class="text-success text-center">
+                <p style="background-color: white">
+                    @ViewBag.Message
+                </p>
+            </div>
+
             <div class="form-group">
                 <label asp-for="FirstName">First Name</label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-warning"></span>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                    </div>
+                    <input asp-for="FirstName" class="form-control" placeholder="Enter your first name" />
+                </div>
+                <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="LastName">Last Name</label>
-                <input asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-warning"></span>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                    </div>
+                    <input asp-for="LastName" class="form-control" placeholder="Enter your last name" />
+                </div>
+                <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -32,35 +48,66 @@
 
             <div class="form-group">
                 <label asp-for="Username">Username</label>
-                <input asp-for="Username" class="form-control" />
-                <span asp-validation-for="Username" class="text-warning"></span>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                    </div>
+                    <input asp-for="Username" class="form-control" placeholder="Enter your username" />
+                </div>
+                <span asp-validation-for="Username" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Password">Password</label>
-                <input asp-for="Password" type="password" class="form-control" />
-                <span asp-validation-for="Password" class="text-warning"></span>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                    </div>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" id="password" />
+                </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
+                @* <div class="form-check">
+                    <ejs-checkbox id="showPasswordCheckbox" label="Show Password" change="onShowPasswordChange"></ejs-checkbox>
+                </div> *@
             </div>
 
             <div class="form-group">
                 <label asp-for="Confirm">Confirm</label>
-                <input asp-for="Confirm" type="password" class="form-control" />
-                <span asp-validation-for="Confirm" class="text-warning"></span>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                    </div>
+                    <input asp-for="Confirm" type="password" class="form-control" placeholder="Confirm your password" id="confirmpassword" />
+                </div>
+                <span asp-validation-for="Confirm" class="text-danger"></span>
+                @* <div class="form-check">
+                    <ejs-checkbox id="showConfirmPasswordCheckbox" label="Show Password" change="onShowConfirmPasswordChange"></ejs-checkbox>
+                </div> *@
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Register New User" class="btn btn-primary" />
+                <button type="submit" class="btn btn-success mb-4">
+                    <i class="fa-solid fa-address-card"></i> Register
+                </button>
+                <a asp-action="Login" class="btn btn-secondary mb-4"><i class="fa-solid fa-arrow-left"></i> Back to login</a>
             </div>
         </form>
     </div>
-</div>
-<div class="text-success">
-    <p>
-        @ViewBag.Message
-    </p>
 </div>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    @* <script>
+        function onShowPasswordChange(args) {
+            var input = document.getElementById('password');
+            input.type = args.checked ? 'text' : 'password'; 
+        }
+    </script>
+    <script>
+        function onShowConfirmPasswordChange(args) {
+            var input = document.getElementById('confirmpassword');
+            input.type = args.checked ? 'text' : 'password'; 
+        }
+    </script> *@
 }
