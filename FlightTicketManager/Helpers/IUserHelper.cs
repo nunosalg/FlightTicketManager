@@ -46,12 +46,18 @@ namespace FlightTicketManager.Helpers
 
         Task RemoveRolesFromUserAsync(User user, IEnumerable<string> roles);
 
-        Task<IdentityResult> DeleteUserAsync(User user);
+        Task<IdentityResult> DeleteUser(User user);
 
         Task<string> GeneratePasswordResetTokenAsync(User user);
 
         Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
 
-        Task<IQueryable<User>> GetAllUsersExceptAdminsAsync();
+        Task<IQueryable> GetAllUsersExceptAdminsAsync();
+
+        //Task<UserRoleViewModel> GetUserByIdIncludeRoleAsync(string id);
+
+        Task<string> GetUserRoleIdAsync(string userId);
+
+        Task<string> GetRoleNameAsync(string roleId);
     }
 }

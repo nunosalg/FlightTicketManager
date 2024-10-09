@@ -28,7 +28,8 @@ namespace FlightTicketManager.Data.Entities
                     return "~/images/defaultavatar.png";
                 }
 
-                return $"https://localhost:44306{AvatarUrl.Substring(1)}";
+                //return $"https://localhost:44306{AvatarUrl.Substring(1)}";
+                return $"http://www.flywithsalgueiro.somee.com{AvatarUrl.Substring(1)}";
             }
         }
 

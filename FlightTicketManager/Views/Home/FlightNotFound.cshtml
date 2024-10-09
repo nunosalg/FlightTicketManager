@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewData["Title"] = "Flight Not Found";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 text-danger">Error: @ViewData["Title"]</h1>
+            <p class="lead mt-3">
+                We're sorry, but the flight you're looking for could not be found. It might have been removed or the link you followed is incorrect.
+            </p>
+            <p>
+                Please check the flight number or browse our available flights.
+            </p>
+            <a href="@Url.Action("AvailableFlights", "Home")" class="btn btn-primary mt-3" style="width:auto">
+                <i class="fas fa-plane-departure"></i> Available Flights
+            </a>
+            <a href="javascript:history.back()" class="btn btn-secondary mt-3" style="width:auto">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </a>
+        </div>
+    </div>
+</div>

@@ -221,3 +221,16 @@ table {
 .e-checkbox-wrapper .e-frame.e-check, .e-css.e-checkbox-wrapper .e-frame.e-check {
     background-color: #2b3a67 !important; /* Dark blue */
 }
+
+center > a {
+    display: none;
+}
+
+/* Error */
+.error-icon {
+    margin: 20px 0;
+}
+
+.error-icon img {
+    max-width: 100px;
+}

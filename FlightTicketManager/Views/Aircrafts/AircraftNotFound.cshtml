@@ -3,5 +3,20 @@
     ViewData["Title"] = "Aircraft Not Found";
 }
 
-<h1 class="text-center">@ViewData["Title"]</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 text-danger">Error: @ViewData["Title"]</h1>
+            <h3>
+                Check the aircraft id.
+            </h3>
+            <a href="@Url.Action("Index", "Aircrafts")" class="btn btn-primary mt-3" style="width:auto">
+                <i class="fa-solid fa-plane"></i> Aircrafts
+            </a>
+            <a href="javascript:history.back()" class="btn btn-secondary mt-3" style="width:auto">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </a>
+        </div>
+    </div>
+</div>
 

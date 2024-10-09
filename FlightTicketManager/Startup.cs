@@ -14,6 +14,9 @@ using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Data.Repositories;
 using FlightTicketManager.Services;
+using Microsoft.AspNetCore.Localization;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace FlightTicketManager
 {
@@ -31,6 +34,23 @@ namespace FlightTicketManager
         {
             string syncfusionKey = Configuration["Syncfusion:LicenseKey"];
             SyncfusionLicenseProvider.RegisterLicense(syncfusionKey);
+
+            // Define global culture
+            var defaultCulture = new CultureInfo("pt-PT"); 
+            var localizationOptions = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(defaultCulture),
+                SupportedCultures = new List<CultureInfo> { defaultCulture },
+                SupportedUICultures = new List<CultureInfo> { defaultCulture }
+            };
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = localizationOptions.DefaultRequestCulture;
+                options.SupportedCultures = localizationOptions.SupportedCultures;
+                options.SupportedUICultures = localizationOptions.SupportedUICultures;
+            });
+
 
             services.AddIdentity<User, IdentityRole>(cfg =>
             {
@@ -108,6 +128,16 @@ namespace FlightTicketManager
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            var supportedCultures = new[] { new CultureInfo("pt-PT") };  
+            var localizationOptions = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("pt-PT"),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            };
+
+            app.UseRequestLocalization(localizationOptions);
 
             app.UseStatusCodePagesWithReExecute("/error/{0}");
 

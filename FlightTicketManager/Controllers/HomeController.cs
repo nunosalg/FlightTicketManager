@@ -91,7 +91,6 @@ namespace FlightTicketManager.Controllers
         }
 
         // GET: Home/BuyTicket
-        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> BuyTicket(int? id)
         {
             if (!this.User.Identity.IsAuthenticated)
@@ -302,6 +301,11 @@ namespace FlightTicketManager.Controllers
             await _ticketRepository.DeleteAsync(ticket);
 
             return RedirectToAction(nameof(MyFlights)); 
+        }
+
+        public IActionResult FlightNotFound()
+        {
+            return View();
         }
 
         public IActionResult TicketNotFound()

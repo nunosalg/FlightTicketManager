@@ -77,18 +77,26 @@
                                 <td class="text-center align-middle">
                                     @if (!this.User.IsInRole("Employee"))
                                     {
-                                        <a asp-action="BuyTicket" class="btn btn-success" asp-route-id="@flight.Id"><i class="fa-solid fa-ticket"></i> Buy Ticket</a>
+                                        <a asp-action="BuyTicket" class="btn btn-success" asp-route-id="@flight.Id">
+                                            <i class="fa-solid fa-ticket"></i> Buy Ticket
+                                        </a>
                                     }
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
+
+                <div class="text-center align-middle">
+                    <a asp-action="Index" class="btn btn-secondary" style="width: auto">
+                        <i class="fa-solid fa-house"></i> Home
+                    </a>
+                </div>
             </div>
         </div>
     }
 
-    <div class="card-container" style="justify-content: space-between;">
+    <div class="card-container" style="justify-content: space-between;" id="searchCard">
         <div class="card" style="background-color:transparent">
             <h2 class="card-title text-center">Search Flights</h2>
             <form asp-action="SearchFlights" method="post">
@@ -123,13 +131,15 @@
                         <span class="sr-only">Loading...</span>
                     </div>
                 </div>
-            </form>
-            @if (Model.FlightsResults != null)
-            {
+
+                @if(Model.FlightsResults != null)
+                {
                 <div>
                     <p><strong>No flights found.</strong></p>
                 </div>
-            }
+                }
+            </form>
+            
         </div>
     </div>
 }
@@ -187,6 +197,12 @@
                 $('#loadingSpinner').show();
                 $('input[type="submit"]').attr('disabled', true);
             });
+
+            // Hide search card if flights are found
+            var flightResults = @Json.Serialize(Model.FlightsResults != null && Model.FlightsResults.Any());
+            if (flightResults) {
+                $('#searchCard').hide(); // Hide the search card
+            }
 
             $(window).on('load', function () {
                 $('#loadingSpinner').hide();

@@ -46,7 +46,8 @@ namespace FlightTicketManager.Data.Entities
                     return "~/images/noimage.png";
                 }
 
-                return $"https://localhost:44306{ImageUrl.Substring(1)}";
+                //return $"https://localhost:44306{ImageUrl.Substring(1)}";
+                return $"http://www.flywithsalgueiro.somee.com{ImageUrl.Substring(1)}"; 
             }
         }
 

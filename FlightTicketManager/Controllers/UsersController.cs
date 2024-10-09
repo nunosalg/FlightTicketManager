@@ -9,6 +9,9 @@ using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
 using FlightTicketManager.Data.Repositories;
+using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic;
+using Syncfusion.EJ2.Linq;
 
 namespace FlightTicketManager.Controllers
 {
@@ -38,9 +41,9 @@ namespace FlightTicketManager.Controllers
             var users = await _userHelper.GetAllUsersExceptAdminsAsync();
             var userList = new List<UserRoleViewModel>();
 
-            foreach (var user in users)
+            foreach (User user in users)
             {
-                var role = (await _userHelper.GetUserRolesAsync(user)).FirstOrDefault();
+                var roles = await _userHelper.GetUserRolesAsync(user);
 
                 userList.Add(new UserRoleViewModel
                 {
@@ -48,7 +51,7 @@ namespace FlightTicketManager.Controllers
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
-                    Role = role 
+                    Roles = roles
                 });
             }
 
@@ -253,7 +256,7 @@ namespace FlightTicketManager.Controllers
 
             if (user != null)
             {
-                var result = await _userHelper.DeleteUserAsync(user);
+                var result = await _userHelper.DeleteUser(user);
                 if (result.Succeeded)
                 {
                     return RedirectToAction(nameof(Index));

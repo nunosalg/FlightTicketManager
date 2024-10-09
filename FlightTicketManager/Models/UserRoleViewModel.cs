@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FlightTicketManager.Models
 {
@@ -18,7 +19,7 @@ namespace FlightTicketManager.Models
         public string Email { get; set; }
 
 
-        public string Role { get; set; }
+        public IList<string> Roles { get; set; } 
 
 
         [Display(Name = "Name")]

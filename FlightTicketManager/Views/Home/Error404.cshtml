@@ -1,7 +1,24 @@
-﻿
-@{
-    ViewData["Title"] = "Error 404";
+﻿@{
+    ViewData["Title"] = "Error 404 - Page Not Found";
 }
 
-<h1>Error 404 - Not Found</h1>
+<div class="container text-center mt-5">
+    <h1 class="display-3 text-danger">404</h1>
+    <h2 class="text-secondary mb-4">Oops! Page Not Found</h2>
 
+    <p class="lead">
+        The page you're looking for might have been removed, had its name changed, or is temporarily unavailable.
+    </p>
+
+    <div class="mt-4">
+        <a href="~/Home/Index" class="btn btn-primary btn-lg" style="width:auto;">
+            <i class="fas fa-home"></i> Return to Homepage
+        </a>
+    </div>
+
+    <hr class="my-4">
+
+    <p>
+        <small>If you believe this is an error, please reach out to our support team for assistance.</small>
+    </p>
+</div>

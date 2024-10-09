@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Models;
 using FlightTicketManager.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlightTicketManager.Helpers
 {
@@ -83,6 +84,22 @@ namespace FlightTicketManager.Helpers
             return await _userManager.GetRolesAsync(user);
         }
 
+        public async Task<string> GetUserRoleIdAsync(string userId)
+        {
+            return await _context.UserRoles
+                .Where(ur => ur.UserId == userId)
+                .Select(ur => ur.RoleId).FirstOrDefaultAsync();
+        }
+
+        public async Task<string> GetRoleNameAsync(string roleId)
+        {
+            //return await _context.Roles
+            //    .Where(r => r.Id == roleId)
+            //    .Select (r => r.Name).FirstOrDefaultAsync();
+            var role = await _context.Roles.FindAsync(roleId);
+            return role?.Name;
+        }
+
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
@@ -132,7 +149,7 @@ namespace FlightTicketManager.Helpers
             await _userManager.RemoveFromRolesAsync(user, roles);
         }
 
-        public Task<IdentityResult> DeleteUserAsync(User user)
+        public Task<IdentityResult> DeleteUser(User user)
         {
             return _userManager.DeleteAsync(user);
         }
@@ -147,14 +164,29 @@ namespace FlightTicketManager.Helpers
             return await _userManager.ResetPasswordAsync(user, token, password);
         }
 
-        public async Task<IQueryable<User>> GetAllUsersExceptAdminsAsync()
+        public async Task<IQueryable> GetAllUsersExceptAdminsAsync()
         {
             var adminUsers = await _userManager.GetUsersInRoleAsync("Admin");
 
             var allUsersExceptAdmins = _userManager.Users
-                .Where(user => !adminUsers.Contains(user));
+                .Where(user => !adminUsers.Select(a => a.Id).Contains(user.Id));
 
             return allUsersExceptAdmins;
         }
+
+        //public async Task<UserRoleViewModel> GetUserByIdIncludeRoleAsync(string id)
+        //{
+        //    var user = await _userManager.FindByIdAsync(id);
+        //    var userWithRoles = new UserRoleViewModel
+        //    {
+        //        Id = user.Id,
+        //        FirstName = user.FirstName,
+        //        LastName = user.LastName,
+        //        Email = user.Email,
+        //        Roles = await _userManager.GetRolesAsync(user),
+        //    };
+
+        //    return userWithRoles;
+        //}
     }
 }
