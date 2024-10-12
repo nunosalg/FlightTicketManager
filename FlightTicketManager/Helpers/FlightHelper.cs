@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Data.Repositories;
 using FlightTicketManager.Models;
+using static Google.Apis.Requests.BatchRequest;
+using System.Collections.Generic;
+using FlightTicketManager.Services;
+using System.Threading.Tasks;
 
 namespace FlightTicketManager.Helpers
 {
@@ -12,15 +16,18 @@ namespace FlightTicketManager.Helpers
         private readonly ICityRepository _cityRepository;
         private readonly IAircraftRepository _aircraftRepository;
         private readonly IFlightRepository _flightRepository;
+        private readonly AirportsApiService _airportsApiService;
 
         public FlightHelper(
             ICityRepository cityRepository, 
             IAircraftRepository aircraftRepository, 
-            IFlightRepository flightRepository)
+            IFlightRepository flightRepository,
+            AirportsApiService airportsApiService)
         {
             _cityRepository = cityRepository;
             _aircraftRepository = aircraftRepository;
             _flightRepository = flightRepository;
+            _airportsApiService = airportsApiService;
         }
 
         /// <summary>
@@ -48,6 +55,11 @@ namespace FlightTicketManager.Helpers
             model.SelectedDestination = currentFlight.Destination.Id;
             model.SelectedAircraft = currentFlight.Aircraft.Id;
         }
+
+        //public async Task<JsonResult> GetAirportsAsync()
+        //{
+
+        //}
 
         /// <summary>
         /// Checks if an aircraft has overlaping flights

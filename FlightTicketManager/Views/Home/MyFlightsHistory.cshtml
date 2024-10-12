@@ -26,7 +26,13 @@ else
                             @Html.DisplayNameFor(model => model.Origin)
                         </th>
                         <th>
+                            @Html.DisplayNameFor(model => model.OriginAirport)
+                        </th>
+                        <th>
                             @Html.DisplayNameFor(model => model.Destination)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.DestinationAirport)
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.Seat)
@@ -59,7 +65,13 @@ else
                                 @Html.DisplayFor(modelItem => item.Origin)
                             </td>
                             <td>
+                                @Html.DisplayFor(modelItem => item.OriginAirport)
+                            </td>
+                            <td>
                                 @Html.DisplayFor(modelItem => item.Destination)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DestinationAirport)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Seat)

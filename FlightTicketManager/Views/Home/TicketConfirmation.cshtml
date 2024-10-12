@@ -26,11 +26,13 @@
             <div class="mb-1">
                 <label><strong>@Html.DisplayNameFor(model => model.Flight.Origin)</strong></label>
                 <p>@Html.DisplayFor(model => model.Flight.Origin.Name)</p>
+                <p>@Html.DisplayFor(model => model.Flight.OriginAirport)</p>
             </div>
 
             <div class="mb-1">
                 <label><strong>@Html.DisplayNameFor(model => model.Flight.Destination)</strong></label>
                 <p>@Html.DisplayFor(model => model.Flight.Destination.Name)</p>
+                <p>@Html.DisplayFor(model => model.Flight.DestinationAirport)</p>
             </div>
 
             <div class="mb-1">

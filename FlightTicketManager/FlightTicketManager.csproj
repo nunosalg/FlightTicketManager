@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\aircrafts\" />
+    <Folder Include="wwwroot\images\users\" />
   </ItemGroup>
 
 </Project>

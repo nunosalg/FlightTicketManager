@@ -3,12 +3,12 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using FlightTicketManager.Models;
 using FlightTicketManager.Data.Repositories;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Services;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FlightTicketManager.Controllers
 {
@@ -128,7 +128,7 @@ namespace FlightTicketManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BuyTicket(BuyTicketViewModel model)
         {
-            // Remove ModelState errors for complex properties
+            // Remove ModelState errors
             ModelState.Remove("Flight.User");
             ModelState.Remove("Flight.Aircraft");
             ModelState.Remove("Flight.Origin.CountryCode");

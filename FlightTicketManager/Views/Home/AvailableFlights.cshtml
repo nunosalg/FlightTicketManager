@@ -29,7 +29,13 @@
                         @Html.DisplayNameFor(model => model.Origin)
                     </th>
                     <th class="text-center align-middle">
+                        @Html.DisplayNameFor(model => model.OriginAirport)
+                    </th>
+                    <th class="text-center align-middle">
                         @Html.DisplayNameFor(model => model.Destination)
+                    </th>
+                    <th class="text-center align-middle">
+                        @Html.DisplayNameFor(model => model.DestinationAirport)
                     </th>
                     <th class="text-center align-middle">
                         @Html.DisplayNameFor(model => model.AvailableSeatsNumber)
@@ -61,8 +67,14 @@
                             <img id="flagImageOrigin" src="@Url.Content(item.Origin.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
                         </td>
                         <td class="text-center align-middle">
+                            <strong>@Html.DisplayFor(modelItem => item.OriginAirport)</strong>
+                        </td>
+                        <td class="text-center align-middle">
                             <strong>@Html.DisplayFor(modelItem => item.Destination.Name)</strong> <br />
                             <img id="flagImageDestination" src="@Url.Content(item.Destination.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
+                        </td>
+                        <td class="text-center align-middle">
+                            <strong>@Html.DisplayFor(modelItem => item.DestinationAirport)</strong>
                         </td>
                         <td class="text-center align-middle">
                             <strong>@Html.DisplayFor(modelItem => item.AvailableSeatsNumber)</strong>

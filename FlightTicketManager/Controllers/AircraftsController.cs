@@ -35,7 +35,7 @@ namespace FlightTicketManager.Controllers
         // GET: Aircrafts
         public IActionResult Index()
         {
-            return View(_aircraftRepository.GetAll().OrderBy(a => a.Description));
+            return View(_aircraftRepository.GetAll().OrderBy(a => a.Model));
         }
 
         // GET: Aircrafts/Details/5
@@ -66,18 +66,18 @@ namespace FlightTicketManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(AircraftViewModel model)
+        public async Task<IActionResult> Create(AircraftViewModel aircraftModel)
         {
             if (ModelState.IsValid)
             {
                 var path = string.Empty;
 
-                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                if (aircraftModel.ImageFile != null && aircraftModel.ImageFile.Length > 0)
                 {
-                    path = await _imageHelper.UploadImageAsync(model.ImageFile, "aircrafts");
+                    path = await _imageHelper.UploadImageAsync(aircraftModel.ImageFile, "aircrafts");
                 }
 
-                var aircraft = _converterHelper.ToAircraft(model, path, true);
+                var aircraft = _converterHelper.ToAircraft(aircraftModel, path, true);
                 aircraft.GenerateSeats();
 
                 aircraft.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
@@ -85,7 +85,7 @@ namespace FlightTicketManager.Controllers
                 await _aircraftRepository.CreateAsync(aircraft);
                 return RedirectToAction(nameof(Index));
             }
-            return View(model);
+            return View(aircraftModel);
         }
 
         // GET: Aircrafts/Edit/5
@@ -111,36 +111,36 @@ namespace FlightTicketManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(AircraftViewModel model)
+        public async Task<IActionResult> Edit(AircraftViewModel aircraftModel)
         {
             if (ModelState.IsValid)
             {
-                var hasFlights = await _flightRepository.HasFlightsWithAircraftAsync(model.Id);
+                var hasFlights = await _flightRepository.HasFlightsWithAircraftAsync(aircraftModel.Id);
 
                 if (hasFlights)
                 {
                     ModelState.AddModelError(string.Empty, "This aircraft cannot be edited because it is associated with one or more flights.");
-                    return View(model);
+                    return View(aircraftModel);
                 }
 
                 try
                 {
-                    var path = model.ImageUrl;
+                    var path = aircraftModel.ImageUrl;
 
-                    if (model.ImageFile != null && model.ImageFile.Length > 0)
+                    if (aircraftModel.ImageFile != null && aircraftModel.ImageFile.Length > 0)
                     {
-                        path = await _imageHelper.UploadImageAsync(model.ImageFile, "aircrafts");
+                        path = await _imageHelper.UploadImageAsync(aircraftModel.ImageFile, "aircrafts");
                     }
 
-                    var aircraft = _converterHelper.ToAircraft(model, path, false);
-                    aircraft.UpdateCapacity(model.Capacity);
+                    var aircraft = _converterHelper.ToAircraft(aircraftModel, path, false);
+                    aircraft.UpdateCapacity(aircraftModel.Capacity);
 
                     aircraft.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                     await _aircraftRepository.UpdateAsync(aircraft);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _aircraftRepository.ExistAsync(model.Id))
+                    if (!await _aircraftRepository.ExistAsync(aircraftModel.Id))
                     {
                         return new NotFoundViewResult("AircraftNotFound");
                     }
@@ -151,7 +151,7 @@ namespace FlightTicketManager.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(model);
+            return View(aircraftModel);
         }
 
         // GET: Aircrafts/Delete/5

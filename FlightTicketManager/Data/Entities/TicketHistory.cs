@@ -25,6 +25,12 @@ namespace FlightTicketManager.Data.Entities
         public string Destination { get; set; }
 
 
+        public string OriginAirport { get; set; }
+
+
+        public string DestinationAirport { get; set; }
+
+
         public string Seat { get; set; }
 
 

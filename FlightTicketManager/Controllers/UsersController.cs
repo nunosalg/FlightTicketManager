@@ -9,9 +9,6 @@ using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
 using FlightTicketManager.Data.Repositories;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic;
-using Syncfusion.EJ2.Linq;
 
 namespace FlightTicketManager.Controllers
 {
@@ -110,16 +107,14 @@ namespace FlightTicketManager.Controllers
                         }, protocol: HttpContext.Request.Scheme);
 
                         Response response = await _mailHelper.SendEmailAsync(model.Username, "Email confirmation", $"<h1>Email Confirmation</h1>" +
-                        $"To allow the user, " +
-                        $"plase click in this link:</br></br><a href = \"{tokenLink}\">Click here to confirm your  email and change your password</a>");
+                            $"To allow the user, " +
+                            $"plase click in this link:</br></br><a href = \"{tokenLink}\">Click here to confirm your  email and change your password</a>");
 
                         if (response.IsSuccess)
                         {
                             return RedirectToAction(nameof(Index));
                         }
                     }
-
-                    
                 }
 
                 if (user != null)

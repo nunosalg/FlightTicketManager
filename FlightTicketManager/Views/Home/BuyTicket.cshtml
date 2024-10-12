@@ -28,8 +28,18 @@
                 </div>
 
                 <div class="form-group">
+                    <label asp-for="Flight.OriginAirport" class="control-label">Origin Airport</label>
+                    <input asp-for="Flight.OriginAirport" class="form-control" readonly />
+                </div>
+
+                <div class="form-group">
                     <label asp-for="Flight.Destination" class="control-label">Destination</label>
                     <input asp-for="Flight.Destination.Name" class="form-control" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Flight.DestinationAirport" class="control-label">Destination Airport</label>
+                    <input asp-for="Flight.DestinationAirport" class="form-control" readonly />
                 </div>
 
                 <div class="form-group">

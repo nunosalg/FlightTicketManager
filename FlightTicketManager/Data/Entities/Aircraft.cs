@@ -11,7 +11,7 @@ namespace FlightTicketManager.Data.Entities
 
         [Required]
         [MaxLength(50)]
-        public string Description { get; set; }
+        public string Model { get; set; }
 
 
         [Required]
@@ -52,10 +52,10 @@ namespace FlightTicketManager.Data.Entities
         }
 
 
-        public string Data => $"{Description} {Airline}";
+        public string Data => $"{Model} {Airline}";
 
 
-        public string ModelId => $"{Description} {Airline} {Id}";
+        public string ModelId => $"{Model} {Airline} {Id}";
 
 
         /// <summary>

@@ -81,11 +81,18 @@ namespace FlightTicketManager.Data
             if (!_context.Cities.Any())
             {
                 AddCity("Lisbon", "PT");
-                AddCity("Madrid", "ES");
-                AddCity("Rome", "IT");
-                AddCity("Paris", "FR");
-                AddCity("Oslo", "NO");
+                await _context.SaveChangesAsync();
 
+                AddCity("Madrid", "ES");
+                await _context.SaveChangesAsync();
+
+                AddCity("Rome", "IT");
+                await _context.SaveChangesAsync();
+
+                AddCity("Paris", "FR");
+                await _context.SaveChangesAsync();
+
+                AddCity("Oslo", "NO");
                 await _context.SaveChangesAsync();
             }
 
@@ -93,15 +100,15 @@ namespace FlightTicketManager.Data
             {
                 var departureDateTime = new DateTime(2024, 9, 12, 14, 30, 0); 
                 var flightDuration = new TimeSpan(2, 30, 0);
-                await AddFlight(departureDateTime, flightDuration, 1, 3, 3, user);
+                await AddFlight(departureDateTime, flightDuration, 1, "Lisbon Portela Airport", 3, "Leonardo Da Vinci (Fiumicino) International Airport", 3, user);
                 
                 departureDateTime = new DateTime(2024, 10, 11, 8, 30, 0);
                 flightDuration = new TimeSpan(1, 30, 0);
-                await AddFlight(departureDateTime, flightDuration, 1, 4, 2, user);
+                await AddFlight(departureDateTime, flightDuration, 1, "Lisbon Portela Airport", 4, "Charles de Gaulle International Airport", 2, user);
 
                 departureDateTime = new DateTime(2024, 12, 11, 7, 30, 0);
                 flightDuration = new TimeSpan(4, 30, 0);
-                await AddFlight(departureDateTime, flightDuration, 1, 5, 1, user);
+                await AddFlight(departureDateTime, flightDuration, 1, "Lisbon Portela Airport", 5, "Oslo Gardermoen Airport", 1, user);
 
                 await _context.SaveChangesAsync();
             }
@@ -156,7 +163,7 @@ namespace FlightTicketManager.Data
         {
             var aircraft = new Aircraft
             {
-                Description = description,
+                Model = description,
                 Airline = airline,
                 Capacity = _random.Next(150, 300),
                 IsActive = true,
@@ -167,7 +174,15 @@ namespace FlightTicketManager.Data
             _context.Aircrafts.Add(aircraft);
         }
 
-        private async Task AddFlight(DateTime departureDateTime, TimeSpan duration, int originId, int destinationId, int aircraftId, User user)
+        private async Task AddFlight(
+            DateTime departureDateTime, 
+            TimeSpan duration, 
+            int originId, 
+            string originAirport, 
+            int destinationId, 
+            string destinationAirport, 
+            int aircraftId, 
+            User user)
         {
             var aircraft = _context.Aircrafts.Local.FirstOrDefault(a => a.Id == aircraftId);
             var origin = _context.Cities.Local.FirstOrDefault(o => o.Id == originId);
@@ -185,7 +200,9 @@ namespace FlightTicketManager.Data
                 DepartureDateTime = departureDateTime,
                 FlightDuration = duration,
                 Origin = origin,
+                OriginAirport = originAirport,
                 Destination = destination,
+                DestinationAirport = destinationAirport,
                 Aircraft = aircraft,
                 User = user,
                 TicketsList = new List<Ticket>()

@@ -1,4 +1,7 @@
 using System.Text;
+using System.Globalization;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Builder;
@@ -14,9 +17,6 @@ using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Data.Repositories;
 using FlightTicketManager.Services;
-using Microsoft.AspNetCore.Localization;
-using System.Collections.Generic;
-using System.Globalization;
 
 namespace FlightTicketManager
 {
@@ -105,6 +105,7 @@ namespace FlightTicketManager
             // Services
             services.AddScoped<IHistoryService, HistoryService>();
             services.AddHostedService<FlightDepartureService>();
+            services.AddHttpClient<AirportsApiService>();
 
             services.ConfigureApplicationCookie(options =>
             {

@@ -22,7 +22,15 @@ namespace FlightTicketManager.Data.Entities
         public string Origin { get; set; }
 
 
+        [Display(Name = "Origin Airport")]
+        public string OriginAirport { get; set; }
+
+
         public string Destination { get; set; }
+
+
+        [Display(Name = "Destination Airport")]
+        public string DestinationAirport { get; set; }
 
 
         [Display(Name = "Aircraft Data")]

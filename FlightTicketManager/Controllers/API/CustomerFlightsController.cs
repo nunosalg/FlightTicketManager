@@ -51,10 +51,11 @@ namespace FlightTicketManager.Controllers.API
                             t.Flight.DepartureDateTime,
                             FlightDuration = t.Flight.FlightDuration.ToString(),
                             t.Flight.ArrivalTime,
-                            Origin = t.Flight.Origin.Name, 
+                            Origin = t.Flight.Origin.Name,
+                            t.Flight.OriginAirport,
                             Destination = t.Flight.Destination.Name,
+                            t.Flight.DestinationAirport,
                             Aircraft = t.Flight.Aircraft.Data,
-                            t.Flight.AvailableSeatsNumber,
                         }
                     })
                     .ToList();

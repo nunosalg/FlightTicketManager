@@ -1,14 +1,13 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using FlightTicketManager.Data.Repositories;
 using FlightTicketManager.Helpers;
 using FlightTicketManager.Models;
-using FlightTicketManager.Data.Entities;
 using FlightTicketManager.Services;
 
 namespace FlightTicketManager.Controllers
@@ -26,6 +25,7 @@ namespace FlightTicketManager.Controllers
         private readonly IMailHelper _mailHelper;
         private readonly IFlightHelper _flightHelper;
         private readonly IHistoryService _historyService;
+        private readonly AirportsApiService _airportsApiService;
 
         public FlightsController(
             IFlightRepository flightRepository,
@@ -37,7 +37,9 @@ namespace FlightTicketManager.Controllers
             IConverterHelper converterHelper,
             IMailHelper mailHelper,
             IFlightHelper flightHelper,
-            IHistoryService historyService)
+            IHistoryService historyService,
+            AirportsApiService airportsApiService
+            )
         {
             _flightRepository = flightRepository;
             _userHelper = userHelper;
@@ -49,6 +51,7 @@ namespace FlightTicketManager.Controllers
             _mailHelper = mailHelper;
             _flightHelper = flightHelper;
             _historyService = historyService;
+            _airportsApiService = airportsApiService;
         }
 
         // GET: Flights
@@ -85,11 +88,14 @@ namespace FlightTicketManager.Controllers
                     Text = city.Name,
                 }).ToList(),
 
+
                 Aircrafts = _aircraftRepository.GetAllActive().Select(aircraft => new SelectListItem
                 {
                     Value = aircraft.Id.ToString(),
-                    Text = aircraft.Data, 
-                })
+                    Text = aircraft.ModelId,
+                }),
+
+                Airports = new List<SelectListItem>()
             };
             return View(model);
         }
@@ -121,11 +127,11 @@ namespace FlightTicketManager.Controllers
                     if (validationResult.IsValid)
                     {
                         var flight = await _converterHelper.ToFlightAsync(
-                            model, 
-                            model.SelectedOrigin, 
-                            model.SelectedDestination, 
-                            model.SelectedAircraft, 
-                            model.User, 
+                            model,
+                            model.SelectedOrigin,
+                            model.SelectedDestination,
+                            model.SelectedAircraft,
+                            model.User,
                             model.TicketsList
                         );
 
@@ -138,9 +144,9 @@ namespace FlightTicketManager.Controllers
                         ModelState.AddModelError("", validationResult.Error);
                     }
                 }
-                catch (DbUpdateException)
+                catch (DbUpdateException ex)
                 {
-                    ModelState.AddModelError("", "Flight duration can't be longer than 24 hours");
+                    ModelState.AddModelError("", ex.Message);
                 }
             }
 
@@ -150,11 +156,13 @@ namespace FlightTicketManager.Controllers
                 Text = city.Name,
             }).ToList();
 
-            model.Aircrafts = _aircraftRepository.GetAll().Select(aircraft => new SelectListItem
+            model.Aircrafts = _aircraftRepository.GetAllActive().Select(aircraft => new SelectListItem
             {
                 Value = aircraft.Id.ToString(),
-                Text = aircraft.Description,
+                Text = aircraft.ModelId,
             }).ToList();
+
+            model.Airports = new List<SelectListItem>();
 
             return View(model);
         }
@@ -175,7 +183,13 @@ namespace FlightTicketManager.Controllers
 
             var model = await _converterHelper.ToFlightViewModelAsync(flight, flight.Aircraft.Id, flight.User, flight.TicketsList);
 
+            // Pre-set the selected airports in the model
+            model.SelectedOriginAirport = flight.OriginAirport;  
+            model.SelectedDestinationAirport = flight.DestinationAirport;
+
             _flightHelper.LoadCitiesAndAircrafts(flight, model);
+
+            model.Airports = new List<SelectListItem>();
 
             return View(model);
         }
@@ -208,7 +222,7 @@ namespace FlightTicketManager.Controllers
                             "and this flight already has tickets sold");
 
                         _flightHelper.LoadCitiesAndAircrafts(currentFlight, model);
-                        
+
                         return View(model);
                     }
 
@@ -226,7 +240,7 @@ namespace FlightTicketManager.Controllers
                     if (validationResult.IsValid)
                     {
                         var flight = await _converterHelper.ToFlightAsync(
-                            model, 
+                            model,
                             model.SelectedOrigin,
                             model.SelectedDestination,
                             model.SelectedAircraft,
@@ -236,11 +250,11 @@ namespace FlightTicketManager.Controllers
                         );
 
                         flight.InitializeAvailableSeats();
-                        foreach(var ticket in flight.TicketsList)
+                        foreach (var ticket in flight.TicketsList)
                         {
                             flight.AvailableSeats.Remove(ticket.Seat);
                         }
-                        
+
                         await _flightRepository.UpdateAsync(flight);
                     }
                     else
@@ -309,6 +323,54 @@ namespace FlightTicketManager.Controllers
 
             await _flightRepository.DeleteAsync(flight);
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetOriginAirports(int cityId)
+        {
+            var city = await _cityRepository.GetByIdAsync(cityId);
+            if (city == null)
+            {
+                return Json(new { success = false, message = "City not found" });
+            }
+
+            var response = await _airportsApiService.GetAirportsAsync(city.Name);
+            if (response.IsSuccess)
+            {
+                var airports = ((List<AirportApi>)response.Results).Select(a => new SelectListItem
+                {
+                    Value = a.Name,
+                    Text = $"{a.Name} - {a.City}, {a.Country}"
+                }).ToList();
+
+                return Json(new { success = true, airports });
+            }
+
+            return Json(new { success = false, message = response.Message });
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetDestinationAirports(int cityId)
+        {
+            var city = await _cityRepository.GetByIdAsync(cityId);
+            if (city == null)
+            {
+                return Json(new { success = false, message = "City not found" });
+            }
+
+            var response = await _airportsApiService.GetAirportsAsync(city.Name);
+            if (response.IsSuccess)
+            {
+                var airports = ((List<AirportApi>)response.Results).Select(a => new SelectListItem
+                {
+                    Value = a.Name,
+                    Text = $"{a.Name} - {a.City}, {a.Country}"
+                }).ToList();
+
+                return Json(new { success = true, airports });
+            }
+
+            return Json(new { success = false, message = response.Message });
         }
 
         public IActionResult FlightsHistory()

@@ -30,7 +30,7 @@ namespace FlightTicketManager.Helpers
             return new Aircraft
             {
                 Id = isNew ? 0 : model.Id,
-                Description = model.Description,
+                Model = model.Model,
                 Airline = model.Airline,
                 Capacity = model.Capacity,
                 ImageUrl = path,
@@ -45,7 +45,7 @@ namespace FlightTicketManager.Helpers
             return new AircraftViewModel
             {
                 Id = aircraft.Id,
-                Description = aircraft.Description,
+                Model = aircraft.Model,
                 Airline = aircraft.Airline,
                 Capacity = aircraft.Capacity,
                 ImageUrl = aircraft.ImageUrl,
@@ -73,7 +73,9 @@ namespace FlightTicketManager.Helpers
                 existingFlight.DepartureDateTime = model.DepartureDateTime;
                 existingFlight.FlightDuration = model.FlightDuration;
                 existingFlight.Origin = origin;
+                existingFlight.OriginAirport = model.SelectedOriginAirport;
                 existingFlight.Destination = destination;
+                existingFlight.DestinationAirport = model.SelectedDestinationAirport;
                 existingFlight.Aircraft = aircraft;
                 existingFlight.User = user;
                 existingFlight.AvailableSeats = aircraft.Seats != null ? new List<string>(aircraft.Seats) : new List<string>();
@@ -89,7 +91,9 @@ namespace FlightTicketManager.Helpers
                     DepartureDateTime = model.DepartureDateTime,
                     FlightDuration = model.FlightDuration,
                     Origin = origin,
+                    OriginAirport = model.SelectedOriginAirport,
                     Destination = destination,
+                    DestinationAirport = model.SelectedDestinationAirport,
                     Aircraft = aircraft,
                     User = user,
                     AvailableSeats = aircraft.Seats != null ? new List<string>(aircraft.Seats) : new List<string>(),
@@ -109,7 +113,9 @@ namespace FlightTicketManager.Helpers
                 DepartureDateTime = flight.DepartureDateTime,
                 FlightDuration = flight.FlightDuration,
                 SelectedOrigin = flight.Origin.Id,
+                SelectedOriginAirport = flight.OriginAirport,
                 SelectedDestination = flight.Destination.Id,
+                SelectedDestinationAirport = flight.DestinationAirport,
                 SelectedAircraft = aircraft.Id,
                 User = user,
                 AvailableSeats = flight.AvailableSeats ?? new List<string>(),

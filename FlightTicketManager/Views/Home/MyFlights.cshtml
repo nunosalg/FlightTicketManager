@@ -59,13 +59,15 @@ else
                             <td class="text-center align-middle">
                                 @Html.DisplayFor(modelItem => item.Flight.FlightNumber)
                             </td>
-                            <td class="text-center align-middle">
-                                @Html.DisplayFor(modelItem => item.Flight.Origin.Name) <br />
-                                <img id="flagImageOrigin" src="@Url.Content(item.Flight.Origin.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
+                            <td class="text-center align-middle" style="width: 200px;">
+                                @Html.DisplayFor(modelItem => item.Flight.Origin.Name)
+                                <img id="flagImageOrigin" src="@Url.Content(item.Flight.Origin.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto"> <br />
+                                @Html.DisplayFor(modelItem => item.Flight.OriginAirport)
                             </td>
-                            <td class="text-center align-middle">
-                                @Html.DisplayFor(modelItem => item.Flight.Destination.Name) <br />
-                                <img id="flagImageDestination" src="@Url.Content(item.Flight.Destination.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto">
+                            <td class="text-center align-middle" style="width: 200px;">
+                                @Html.DisplayFor(modelItem => item.Flight.Destination.Name)
+                                <img id="flagImageDestination" src="@Url.Content(item.Flight.Destination.FlagUrl)" alt="Image" style="width:50px;height:30px;max-width:100%;height:auto"> <br />
+                                @Html.DisplayFor(modelItem => item.Flight.DestinationAirport)
                             </td>
                             <td class="text-center align-middle">
                                 @Html.DisplayFor(modelItem => item.Flight.DepartureDateTime)
@@ -91,7 +93,7 @@ else
                             <td class="text-center align-middle">
                                 @Html.DisplayFor(modelItem => item.Price)
                             </td>
-                            <td>
+                            <td class="text-center align-middle">
                                 <div class="d-flex flex-column gap-2">
                                     <a asp-action="ChangeSeat" asp-route-id="@item.Id" class="btn btn-primary">
                                         <i class="fa-solid fa-chair"></i> Change Seat

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +16,9 @@ namespace FlightTicketManager.Controllers
         private readonly ICityRepository _cityRepository;
         private readonly IFlightRepository _flightRepository;
 
-        public CitiesController(ICityRepository cityRepository, IFlightRepository flightRepository)
+        public CitiesController(
+            ICityRepository cityRepository, 
+            IFlightRepository flightRepository)
         {
             _cityRepository = cityRepository;
             _flightRepository = flightRepository;

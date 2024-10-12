@@ -38,6 +38,16 @@ namespace FlightTicketManager.Data.Entities
 
 
         [Required]
+        [Display(Name = "Origin Airport")]
+        public string OriginAirport {  get; set; }
+
+
+        [Required]
+        [Display(Name = "Destination Airport")]
+        public string DestinationAirport { get; set; }
+
+
+        [Required]
         public Aircraft Aircraft { get; set; }
 
 

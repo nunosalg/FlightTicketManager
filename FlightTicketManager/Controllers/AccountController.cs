@@ -289,6 +289,12 @@ namespace FlightTicketManager.Controllers
                 return new NotFoundViewResult("UserNotFound");
             }
 
+            if (User.Identity.IsAuthenticated)
+            {
+                await _userHelper.LogoutAsync();
+                return RedirectToAction(nameof(ConfirmEmailChangePassword), new { userId, token });
+            }
+
             var user = await _userHelper.GetUserByIdAsync(userId);
             if (user == null)
             {
@@ -357,8 +363,8 @@ namespace FlightTicketManager.Controllers
                     new { token = myToken }, protocol: HttpContext.Request.Scheme);
 
                 Response response = await _mailHelper.SendEmailAsync(model.Email, "FWS Password Reset", $"<h1>Fly With Salgueiro Password Reset</h1>" +
-                $"To reset the password click on this link:</br></br>" +
-                $"<a href = \"{link}\">Reset Password</a>");
+                    $"To reset the password click on this link:</br></br>" +
+                    $"<a href = \"{link}\">Reset Password</a>");
 
                 if (response.IsSuccess)
                 {

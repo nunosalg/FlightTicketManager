@@ -27,11 +27,24 @@ namespace FlightTicketManager.Models
 
 
         [Required]
-        [Display(Name = "Selected origin")]
+        [Display(Name = "Selected Origin")]
         public int SelectedOrigin { get; set; }
 
 
         public IEnumerable<SelectListItem> Cities { get; set; }
+
+
+        public IEnumerable<SelectListItem> Airports { get; set; }
+
+
+        [Required]
+        [Display(Name = "Selected Origin Airport")]
+        public string SelectedOriginAirport { get; set; }
+
+
+        [Required]
+        [Display(Name = "Selected Destination Airport")]
+        public string SelectedDestinationAirport { get; set; }
 
 
         [Required]
