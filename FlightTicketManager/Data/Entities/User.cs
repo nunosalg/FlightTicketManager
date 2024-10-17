@@ -18,6 +18,9 @@ namespace FlightTicketManager.Data.Entities
 
         public string AvatarUrl { get; set; }
 
+        // Property created to display the user role on Index
+        public string Role { get; set; }
+
 
         public string AvatarFullPath
         {

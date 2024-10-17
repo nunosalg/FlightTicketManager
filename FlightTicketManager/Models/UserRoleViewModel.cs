@@ -19,7 +19,10 @@ namespace FlightTicketManager.Models
         public string Email { get; set; }
 
 
-        public IList<string> Roles { get; set; }
+        //public IList<string> Roles { get; set; }
+
+
+        public string Role { get; set; }
 
 
         [Display(Name = "Name")]

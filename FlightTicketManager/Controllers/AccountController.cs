@@ -99,6 +99,7 @@ namespace FlightTicketManager.Controllers
                         Email = model.Username,
                         UserName = model.Username,
                         BirthDate = model.BirthDate,
+                        Role = "Customer"
                     };
 
                     var result = await _userHelper.AddUserAsync(user, model.Password);

@@ -49,6 +49,7 @@ namespace FlightTicketManager.Data
                     Email = "nunotestescet87@gmail.com",
                     UserName = "nunotestescet87@gmail.com",
                     BirthDate = new DateTime(1990, 10, 24),
+                    Role = "Admin"
                 };
 
                 var result = await _userHelper.AddUserAsync(user, "123456");

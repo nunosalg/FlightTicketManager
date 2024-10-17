@@ -40,7 +40,7 @@ namespace FlightTicketManager.Controllers
 
             foreach (User user in users)
             {
-                var roles = await _userHelper.GetUserRolesAsync(user);
+                //var roles = await _userHelper.GetUserRolesAsync(user);
 
                 userList.Add(new UserRoleViewModel
                 {
@@ -48,7 +48,8 @@ namespace FlightTicketManager.Controllers
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
-                    Roles = roles
+                    Role = user.Role,
+                    //Roles = roles
                 });
             }
 
@@ -87,6 +88,7 @@ namespace FlightTicketManager.Controllers
                         Email = model.Username,
                         UserName = model.Username,
                         BirthDate = model.BirthDate,
+                        Role = model.SelectedRole,
                     };
 
                     string password = new Random().ToString();
@@ -181,6 +183,7 @@ namespace FlightTicketManager.Controllers
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
                 user.Email = model.Username;
+                user.Role = model.SelectedRole;
 
                 var result = await _userHelper.UpdateUserAsync(user);
                 if (!result.Succeeded)
